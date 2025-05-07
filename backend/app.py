@@ -35,6 +35,42 @@ except Exception as e:
     print(f"Error loading model: {e}")
     llm = None
 
+def split_text_into_chunks(text, max_chunk_size=4000):
+    """Split text into chunks of approximately max_chunk_size characters."""
+    chunks = []
+    current_chunk = []
+    current_size = 0
+    
+    # Split text into paragraphs
+    paragraphs = text.split('\n\n')
+    
+    for paragraph in paragraphs:
+        # If a single paragraph is too long, split it into sentences
+        if len(paragraph) > max_chunk_size:
+            sentences = paragraph.split('. ')
+            for sentence in sentences:
+                if current_size + len(sentence) > max_chunk_size:
+                    chunks.append('\n\n'.join(current_chunk))
+                    current_chunk = [sentence]
+                    current_size = len(sentence)
+                else:
+                    current_chunk.append(sentence)
+                    current_size += len(sentence)
+        else:
+            if current_size + len(paragraph) > max_chunk_size:
+                chunks.append('\n\n'.join(current_chunk))
+                current_chunk = [paragraph]
+                current_size = len(paragraph)
+            else:
+                current_chunk.append(paragraph)
+                current_size += len(paragraph)
+    
+    # Add the last chunk if it's not empty
+    if current_chunk:
+        chunks.append('\n\n'.join(current_chunk))
+    
+    return chunks
+
 @app.route('/api/test', methods=['GET'])
 def test():
     return jsonify({"status": "ok", "message": "Backend is running"})
@@ -73,30 +109,39 @@ def summarize():
 
 לבסוף המלץ האם מגיעה נכות לפי תקנון קרן הפנסיה כלל, חלקית או מלאה ולאיזה תקופה"""
 
-        # Prepare the prompt using the custom prompt if provided
-        prompt = f"""{custom_prompt if custom_prompt else default_prompt}
+        # Split text into chunks if it's too long
+        chunks = split_text_into_chunks(text)
+        summaries = []
+        
+        for i, chunk in enumerate(chunks):
+            print(f"Processing chunk {i+1} of {len(chunks)}")
+            
+            # Prepare the prompt using the custom prompt if provided
+            prompt = f"""{custom_prompt if custom_prompt else default_prompt}
 
-Text to summarize:
-{text}
+Text to summarize (Part {i+1} of {len(chunks)}):
+{chunk}
 
 Summary:"""
 
-        print("Generating summary...")
-        # Generate summary
-        output = llm(
-            prompt,
-            max_tokens=512,
-            temperature=0.7,
-            top_p=0.95,
-            repeat_penalty=1.2,
-            stop=["Text to summarize:", "\n\n"]
-        )
-        print("Summary generated successfully!")
-
-        summary = output['choices'][0]['text'].strip()
+            # Generate summary for this chunk
+            output = llm(
+                prompt,
+                max_tokens=512,
+                temperature=0.7,
+                top_p=0.95,
+                repeat_penalty=1.2,
+                stop=["Text to summarize:", "\n\n"]
+            )
+            
+            chunk_summary = output['choices'][0]['text'].strip()
+            summaries.append(chunk_summary)
+        
+        # Combine all summaries
+        final_summary = "\n\n".join(summaries)
         
         return jsonify({
-            'summary': summary
+            'summary': final_summary
         })
 
     except Exception as e:

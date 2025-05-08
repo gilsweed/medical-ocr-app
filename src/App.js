@@ -213,12 +213,14 @@ function App() {
       setTotalPages(totalPagesCount);
       let processedPagesCount = 0;
       let globalIndex = 0;
+
       for (let fileIndex = 0; fileIndex < selectedFiles.length; fileIndex++) {
         const file = selectedFiles[fileIndex];
         setCurrentFile(file.name);
         setCurrentFileIndex(fileIndex + 1);
         setFileProgress(0);
         setProcessedFiles(fileIndex);
+
         if (file.type === 'application/pdf') {
           let typedarray;
           try {
@@ -229,96 +231,84 @@ function App() {
               reader.readAsArrayBuffer(file);
             });
             const pdfDoc = await pdfjsLib.getDocument(typedarray).promise;
+            
             for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
               setCurrentPageInfo(`Processing page ${pageNum}/${pdfDoc.numPages} of ${file.name}`);
               setShowSpinner(true);
+              
               try {
                 const imageData = await convertPdfPageToImage(pdfDoc, pageNum);
-                const image = await createImageBitmap(await fetch(imageData).then(r => r.blob()));
-                const downscaledCanvas = await downscaleImage(image, 1200);
-                const pixelData = downscaledCanvas.getContext('2d').getImageData(0, 0, downscaledCanvas.width, downscaledCanvas.height);
-                const threshold = otsuThreshold(pixelData.data);
-                applyThreshold(pixelData.data, threshold);
-                downscaledCanvas.getContext('2d').putImageData(pixelData, 0, 0);
-                const preResult = await Tesseract.recognize(downscaledCanvas.toDataURL('image/png'), selectedLanguage);
-                const detectedLang = detectLanguage(preResult.data.text);
-                const result = await Tesseract.recognize(
-                  downscaledCanvas.toDataURL('image/png'),
-                  selectedLanguage,
-                  getOcrConfig(detectedLang)
-                );
-                const processedText = preprocessText(result.data.text, detectedLang);
-                fullText += `=== ${file.name} - Page ${pageNum} ===\n${processedText}\n\n`;
-              } catch (pageError) {
-                console.error(`Error processing page ${pageNum} of ${file.name}:`, pageError);
-                setErrorMessage(`Error processing page ${pageNum} of ${file.name}: ${pageError.message}`);
-                fullText += `=== ${file.name} - Page ${pageNum} ===\n[Error processing this page: ${pageError.message}]\n\n`;
+                const response = await fetch(imageData);
+                const blob = await response.blob();
+                
+                // Create form data
+                const formData = new FormData();
+                formData.append('file', blob, `page_${pageNum}.png`);
+                
+                // Send to backend
+                const ocrResponse = await fetch('http://localhost:5001/api/ocr', {
+                  method: 'POST',
+                  body: formData
+                });
+                
+                if (!ocrResponse.ok) {
+                  throw new Error(`OCR failed: ${ocrResponse.statusText}`);
+                }
+                
+                const result = await ocrResponse.json();
+                const processedText = preprocessText(result.text, result.language);
+                
+                fullText += processedText + '\n\n';
+                processedPagesCount++;
+                setProcessedPages(processedPagesCount);
+                setOverallProgress(Math.round((processedPagesCount / totalPagesCount) * 100));
+              } catch (error) {
+                console.error(`Error processing page ${pageNum}:`, error);
+                setErrorMessage(`Error processing page ${pageNum} of ${file.name}: ${error.message}`);
               }
-              processedPagesCount++;
-              globalIndex++;
-              setProcessedPages(processedPagesCount);
-              setGlobalItemIndex(globalIndex);
-              setOverallProgress(Math.round((processedPagesCount / totalPagesCount) * 100));
-              setShowSpinner(false);
             }
-            setCurrentPageInfo('');
-          } catch (pdfError) {
-            console.error(`Error processing PDF ${file.name}:`, pdfError);
-            setErrorMessage(`Error processing PDF ${file.name}: ${pdfError.message}`);
-            fullText += `=== ${file.name} ===\n[Error processing this PDF: ${pdfError.message}]\n\n`;
-            // If PDF can't be opened, count all its pages as processed to avoid hanging
-            processedPagesCount += 1;
-            setProcessedPages(processedPagesCount);
-            globalIndex++;
-            setGlobalItemIndex(globalIndex);
-            setOverallProgress(Math.round((processedPagesCount / totalPagesCount) * 100));
-            setShowSpinner(false);
+          } catch (error) {
+            console.error('Error processing PDF:', error);
+            setErrorMessage(`Error processing PDF ${file.name}: ${error.message}`);
           }
         } else if (file.type.startsWith('image/')) {
+          setCurrentPageInfo(`Processing ${file.name}`);
+          setShowSpinner(true);
+          
           try {
-            setCurrentPageInfo(`Processing image: ${file.name}`);
-            setShowSpinner(true);
-            const image = await createImageBitmap(file);
-            const downscaledCanvas = await downscaleImage(image, 1200);
-            const pixelData = downscaledCanvas.getContext('2d').getImageData(0, 0, downscaledCanvas.width, downscaledCanvas.height);
-            const threshold = otsuThreshold(pixelData.data);
-            applyThreshold(pixelData.data, threshold);
-            downscaledCanvas.getContext('2d').putImageData(pixelData, 0, 0);
-            const preResult = await Tesseract.recognize(downscaledCanvas.toDataURL('image/png'), selectedLanguage);
-            const detectedLang = detectLanguage(preResult.data.text);
-            const result = await Tesseract.recognize(
-              downscaledCanvas.toDataURL('image/png'),
-              selectedLanguage,
-              getOcrConfig(detectedLang)
-            );
-            const processedText = preprocessText(result.data.text, detectedLang);
-            fullText += `=== ${file.name} ===\n${processedText}\n\n`;
-          } catch (imgError) {
-            console.error(`Error processing image ${file.name}:`, imgError);
-            setErrorMessage(`Error processing image ${file.name}: ${imgError.message}`);
-            fullText += `=== ${file.name} ===\n[Error processing this image: ${imgError.message}]\n\n`;
+            // Create form data
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            // Send to backend
+            const ocrResponse = await fetch('http://localhost:5001/api/ocr', {
+              method: 'POST',
+              body: formData
+            });
+            
+            if (!ocrResponse.ok) {
+              throw new Error(`OCR failed: ${ocrResponse.statusText}`);
+            }
+            
+            const result = await ocrResponse.json();
+            const processedText = preprocessText(result.text, result.language);
+            
+            fullText += processedText + '\n\n';
+            processedPagesCount++;
+            setProcessedPages(processedPagesCount);
+            setOverallProgress(Math.round((processedPagesCount / totalPagesCount) * 100));
+          } catch (error) {
+            console.error('Error processing image:', error);
+            setErrorMessage(`Error processing ${file.name}: ${error.message}`);
           }
-          processedPagesCount++;
-          globalIndex++;
-          setProcessedPages(processedPagesCount);
-          setGlobalItemIndex(globalIndex);
-          setOverallProgress(Math.round((processedPagesCount / totalPagesCount) * 100));
-          setShowSpinner(false);
-          setCurrentPageInfo('');
-        } else {
-          setErrorMessage(`Unsupported file type: ${file.type}`);
         }
-        setProcessedFiles(fileIndex + 1);
-        setFileProgress(0);
       }
-      setOcrText(fullText);
-      setOverallProgress(100);
-      setFileProgress(100);
-      setCurrentFile('');
-      setCurrentFileIndex(0);
-      console.log('All files processed successfully');
+      
+      setOcrText(fullText.trim());
+      setShowSpinner(false);
     } catch (error) {
-      setErrorMessage(`Error processing files: ${error.message}`);
+      console.error('OCR process failed:', error);
+      setErrorMessage(`OCR process failed: ${error.message}`);
     } finally {
       setIsProcessing(false);
     }

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Get the directory where the script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+APP_DIR="$(dirname "$SCRIPT_DIR")"
+RESOURCES_DIR="$APP_DIR/Resources"
+
+# Set up Python environment
+export PYTHONPATH="$RESOURCES_DIR/lib/python3.9/site-packages"
+export DYLD_LIBRARY_PATH="$RESOURCES_DIR/lib"
+
+# Run the Python script
+python3 "$RESOURCES_DIR/mac_app.py"

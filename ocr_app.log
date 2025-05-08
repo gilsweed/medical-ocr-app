@@ -1,0 +1,56 @@
+2025-05-08 19:32:33,441 - INFO - Application started
+2025-05-08 19:33:14,986 - DEBUG - Importing AvifImagePlugin
+2025-05-08 19:33:14,988 - DEBUG - Importing BlpImagePlugin
+2025-05-08 19:33:14,988 - DEBUG - Importing BmpImagePlugin
+2025-05-08 19:33:14,988 - DEBUG - Importing BufrStubImagePlugin
+2025-05-08 19:33:14,989 - DEBUG - Importing CurImagePlugin
+2025-05-08 19:33:14,989 - DEBUG - Importing DcxImagePlugin
+2025-05-08 19:33:14,990 - DEBUG - Importing DdsImagePlugin
+2025-05-08 19:33:14,993 - DEBUG - Importing EpsImagePlugin
+2025-05-08 19:33:14,993 - DEBUG - Importing FitsImagePlugin
+2025-05-08 19:33:14,994 - DEBUG - Importing FliImagePlugin
+2025-05-08 19:33:14,995 - DEBUG - Importing FpxImagePlugin
+2025-05-08 19:33:14,995 - DEBUG - Image: failed to import FpxImagePlugin: No module named 'olefile'
+2025-05-08 19:33:14,995 - DEBUG - Importing FtexImagePlugin
+2025-05-08 19:33:14,995 - DEBUG - Importing GbrImagePlugin
+2025-05-08 19:33:14,996 - DEBUG - Importing GifImagePlugin
+2025-05-08 19:33:14,996 - DEBUG - Importing GribStubImagePlugin
+2025-05-08 19:33:14,996 - DEBUG - Importing Hdf5StubImagePlugin
+2025-05-08 19:33:14,996 - DEBUG - Importing IcnsImagePlugin
+2025-05-08 19:33:14,998 - DEBUG - Importing IcoImagePlugin
+2025-05-08 19:33:14,999 - DEBUG - Importing ImImagePlugin
+2025-05-08 19:33:15,000 - DEBUG - Importing ImtImagePlugin
+2025-05-08 19:33:15,000 - DEBUG - Importing IptcImagePlugin
+2025-05-08 19:33:15,001 - DEBUG - Importing JpegImagePlugin
+2025-05-08 19:33:15,001 - DEBUG - Importing Jpeg2KImagePlugin
+2025-05-08 19:33:15,001 - DEBUG - Importing McIdasImagePlugin
+2025-05-08 19:33:15,001 - DEBUG - Importing MicImagePlugin
+2025-05-08 19:33:15,001 - DEBUG - Image: failed to import MicImagePlugin: No module named 'olefile'
+2025-05-08 19:33:15,001 - DEBUG - Importing MpegImagePlugin
+2025-05-08 19:33:15,002 - DEBUG - Importing MpoImagePlugin
+2025-05-08 19:33:15,045 - DEBUG - Importing MspImagePlugin
+2025-05-08 19:33:15,046 - DEBUG - Importing PalmImagePlugin
+2025-05-08 19:33:15,046 - DEBUG - Importing PcdImagePlugin
+2025-05-08 19:33:15,047 - DEBUG - Importing PcxImagePlugin
+2025-05-08 19:33:15,047 - DEBUG - Importing PdfImagePlugin
+2025-05-08 19:33:15,054 - DEBUG - Importing PixarImagePlugin
+2025-05-08 19:33:15,056 - DEBUG - Importing PngImagePlugin
+2025-05-08 19:33:15,056 - DEBUG - Importing PpmImagePlugin
+2025-05-08 19:33:15,056 - DEBUG - Importing PsdImagePlugin
+2025-05-08 19:33:15,056 - DEBUG - Importing QoiImagePlugin
+2025-05-08 19:33:15,057 - DEBUG - Importing SgiImagePlugin
+2025-05-08 19:33:15,057 - DEBUG - Importing SpiderImagePlugin
+2025-05-08 19:33:15,057 - DEBUG - Importing SunImagePlugin
+2025-05-08 19:33:15,058 - DEBUG - Importing TgaImagePlugin
+2025-05-08 19:33:15,058 - DEBUG - Importing TiffImagePlugin
+2025-05-08 19:33:15,058 - DEBUG - Importing WebPImagePlugin
+2025-05-08 19:33:15,063 - DEBUG - Importing WmfImagePlugin
+2025-05-08 19:33:15,065 - DEBUG - Importing XbmImagePlugin
+2025-05-08 19:33:15,066 - DEBUG - Importing XpmImagePlugin
+2025-05-08 19:33:15,066 - DEBUG - Importing XVThumbImagePlugin
+2025-05-08 19:33:15,067 - ERROR - Error in OCR process: cannot identify image file "/Users/gilsweed/Downloads/6469e8c3-0aa0-4f12-a6ad-34bd0b08a93c/הזמנת חוות דעת רפואית פנסיה מס' 1519352/1197614670 - אישורי מחלה- תביעות חיים.pdf"
+2025-05-08 19:33:35,716 - ERROR - Error in OCR process: cannot identify image file "/Users/gilsweed/Downloads/6469e8c3-0aa0-4f12-a6ad-34bd0b08a93c/הזמנת חוות דעת רפואית פנסיה מס' 1519352/1197614670 - אישורי מחלה- תביעות חיים.pdf"
+2025-05-08 19:35:40,152 - INFO - Application started
+2025-05-08 19:35:43,456 - INFO - Development mode enabled
+2025-05-08 19:35:45,172 - INFO - Development mode disabled
+2025-05-08 19:35:45,922 - INFO - Development mode enabled

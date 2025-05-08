@@ -1,299 +1,308 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from llama_cpp import Llama
 import os
-from dotenv import load_dotenv
 import requests
 from PIL import Image
-import io
-import base64
-from langdetect import detect
 import pytesseract
-
-load_dotenv()
+from langdetect import detect
+from llama_cpp import Llama
+import gc
+import atexit
+import signal
+from io import BytesIO
+import base64
+import time
+import sys
+import socket
+import subprocess
 
 app = Flask(__name__)
-# Enable CORS for all routes and origins
-CORS(app, resources={
-    r"/*": {
-        "origins": "*",
-        "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type"]
-    }
-})
+CORS(app)
 
-# Initialize Llama model - look in backend/models directory
-MODEL_PATH = os.path.join(os.path.dirname(__file__), 'models', 'llama-2-7b-chat.Q2_K.gguf')
-print(f"Loading model from: {MODEL_PATH}")
+# Initialize global variables at module level
+MODEL_PATH = 'backend/models/llama-2-7b-chat.Q2_K.gguf'
+llm = None
 
-try:
-    if not os.path.exists(MODEL_PATH):
-        print(f"Error: Model file not found at {MODEL_PATH}")
-        llm = None
-    else:
+def cleanup_resources():
+    global llm
+    try:
+        if llm:
+            del llm
+        gc.collect()
+    except Exception as e:
+        print(f"Error during cleanup: {str(e)}")
+
+def signal_handler(signum, frame):
+    cleanup_resources()
+    exit(0)
+
+# Register cleanup handlers
+atexit.register(cleanup_resources)
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
+
+def load_model():
+    global llm
+    try:
+        model_path = os.path.join(os.path.dirname(__file__), 'models', 'llama-2-7b-chat.Q2_K.gguf')
+        print(f"Loading model from: {model_path}")
+        print("Initializing model with optimized parameters...")
+        
+        # Further reduced memory parameters
         llm = Llama(
-            model_path=MODEL_PATH,
-            n_ctx=8192,  # Increased context window to handle larger documents
-            n_threads=os.cpu_count(),  # Use all CPU cores
+            model_path=model_path,
+            n_ctx=1024,      # Reduced from 2048
+            n_batch=1,       # Reduced from 2
+            n_threads=1,     # Keep at 1
+            n_gpu_layers=0,  # CPU only
+            verbose=False,
+            offload_kqv=True # Enable offloading to reduce memory usage
         )
         print("Model loaded successfully!")
-except Exception as e:
-    print(f"Error loading model: {e}")
-    llm = None
+    except Exception as e:
+        print(f"Error loading model: {str(e)}")
+        raise
 
-def split_text_into_chunks(text, max_chunk_size=4000):
-    """Split text into chunks of approximately max_chunk_size characters."""
+def split_text_into_chunks(text, max_chunk_size=300):
+    if not text or not text.strip():
+        return []
+        
+    # Split into sentences first
+    sentences = text.split('.')
     chunks = []
     current_chunk = []
     current_size = 0
     
-    # Split text into paragraphs
-    paragraphs = text.split('\n\n')
-    
-    for paragraph in paragraphs:
-        # If a single paragraph is too long, split it into sentences
-        if len(paragraph) > max_chunk_size:
-            sentences = paragraph.split('. ')
-            for sentence in sentences:
-                if current_size + len(sentence) > max_chunk_size:
-                    chunks.append('\n\n'.join(current_chunk))
-                    current_chunk = [sentence]
-                    current_size = len(sentence)
-                else:
-                    current_chunk.append(sentence)
-                    current_size += len(sentence)
+    for sentence in sentences:
+        sentence = sentence.strip() + '.'
+        sentence_size = len(sentence)
+        
+        if current_size + sentence_size > max_chunk_size and current_chunk:
+            chunks.append(' '.join(current_chunk))
+            current_chunk = [sentence]
+            current_size = sentence_size
         else:
-            if current_size + len(paragraph) > max_chunk_size:
-                chunks.append('\n\n'.join(current_chunk))
-                current_chunk = [paragraph]
-                current_size = len(paragraph)
-            else:
-                current_chunk.append(paragraph)
-                current_size += len(paragraph)
+            current_chunk.append(sentence)
+            current_size += sentence_size
     
-    # Add the last chunk if it's not empty
     if current_chunk:
-        chunks.append('\n\n'.join(current_chunk))
+        chunks.append(' '.join(current_chunk))
     
     return chunks
 
-def ocr_dicta(image: Image.Image) -> str:
-    """
-    Send a PIL Image to Dicta OCR API and return the recognized Hebrew text.
-    """
-    # Convert image to JPEG and base64 encode it
-    buffered = io.BytesIO()
-    image.save(buffered, format="JPEG")
-    img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
-
-    # Dicta API endpoint
-    url = "https://services.dicta.org.il/api/ocr/recognize"
-    payload = {
-        "image": img_str,
-        "lang": "hebrew_printed"
-    }
+@app.route('/api/summarize', methods=['POST'])
+def summarize():
     try:
-        response = requests.post(url, json=payload, timeout=30)
-        response.raise_for_status()
-        result = response.json()
-        return result.get("text", "")
+        data = request.get_json()
+        text = data.get('text', '')
+        
+        if not text:
+            return jsonify({"error": "No text provided"}), 400
+            
+        print(f"Received text of length: {len(text)}")
+        
+        # Split text into smaller chunks
+        chunks = split_text_into_chunks(text)
+        total_chunks = len(chunks)
+        print(f"Processing {total_chunks} chunks")
+        
+        summaries = []
+        for i, chunk in enumerate(chunks, 1):
+            print(f"Processing chunk {i} of {total_chunks}")
+            try:
+                # Generate summary for each chunk
+                prompt = f"Summarize the following text in Hebrew:\n\n{chunk}"
+                response = llm(prompt, max_tokens=150, stop=["</s>"], echo=False)
+                summary = response['choices'][0]['text'].strip()
+                summaries.append(summary)
+                
+                # Add a small delay between chunks to prevent memory pressure
+                time.sleep(0.1)
+                
+            except Exception as e:
+                print(f"Error processing chunk {i}: {str(e)}")
+                continue
+        
+        # Combine summaries
+        final_summary = ' '.join(summaries)
+        return jsonify({"summary": final_summary})
+        
     except Exception as e:
-        print(f"Dicta OCR error: {e}")
+        print(f"Error in summarization: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+def process_image_with_ocr(image_path):
+    try:
+        print(f"Processing file: {os.path.basename(image_path)}")
+        img = Image.open(image_path)
+        print(f"Image opened successfully. Size: {img.size}, Mode: {img.mode}")
+        
+        # Convert RGBA to RGB if needed
+        if img.mode == 'RGBA':
+            print("Converting RGBA to RGB")
+            img = img.convert('RGB')
+        
+        # Try Tesseract first since it's more reliable
+        print("Starting Tesseract OCR...")
+        tesseract_result = pytesseract.image_to_string(img, lang='heb+eng')
+        tesseract_length = len(tesseract_result)
+        print(f"Tesseract result length: {tesseract_length}")
+        
+        # Only try Dicta if Tesseract result is too short
+        if tesseract_length < 100:
+            print("Starting Dicta OCR...")
+            try:
+                dicta_result = process_with_dicta(img)
+                dicta_length = len(dicta_result)
+                print(f"Dicta result length: {dicta_length}")
+                
+                # Use Dicta result if it's significantly longer
+                if dicta_length > tesseract_length * 1.5:
+                    return dicta_result
+            except Exception as e:
+                print(f"Dicta OCR error: {str(e)}")
+        
+        return tesseract_result
+        
+    except Exception as e:
+        print(f"Error in OCR processing: {str(e)}")
         return ""
 
-def detect_language(text):
+def process_with_dicta(image):
     try:
-        lang = detect(text)
-        return lang  # 'he' for Hebrew, 'en' for English, etc.
-    except Exception:
-        return 'unknown'
+        # Convert image to base64
+        buffered = BytesIO()
+        image.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue()).decode()
+        
+        # Prepare request
+        headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+        data = {
+            'image': img_str,
+            'language': 'he'
+        }
+        
+        # Try multiple DNS servers
+        dns_servers = ['8.8.8.8', '1.1.1.1', '9.9.9.9']
+        for dns in dns_servers:
+            try:
+                # Configure session with specific DNS
+                session = requests.Session()
+                session.mount('https://', requests.adapters.HTTPAdapter(
+                    max_retries=3,
+                    pool_connections=1,
+                    pool_maxsize=1
+                ))
+                
+                # Make request with timeout and DNS configuration
+                response = session.post(
+                    'https://services.dicta.org.il/api/ocr/recognize',
+                    headers=headers,
+                    json=data,
+                    timeout=10,
+                    verify=True
+                )
+                
+                if response.status_code == 200:
+                    return response.json().get('text', '')
+                else:
+                    print(f"Dicta API error: {response.status_code}")
+                    continue
+                    
+            except requests.exceptions.RequestException as e:
+                print(f"Dicta API request error with DNS {dns}: {str(e)}")
+                continue
+                
+        print("All DNS attempts failed, falling back to Tesseract")
+        return ""
+            
+    except Exception as e:
+        print(f"Dicta processing error: {str(e)}")
+        return ""
 
-def ocr_best(image: Image.Image) -> str:
-    """
-    Run both Dicta and Tesseract OCR, and return the best result for mixed Hebrew/English pages.
-    """
+@app.route('/api/ocr', methods=['POST'])
+def ocr():
     try:
-        print("Starting OCR processing...")
+        if 'file' not in request.files:
+            return jsonify({"error": "No file provided"}), 400
+            
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({"error": "No file selected"}), 400
+            
+        print(f"Processing file: {file.filename}")
+        image = Image.open(file)
+        print(f"Image opened successfully. Size: {image.size}, Mode: {image.mode}")
         
         # Convert RGBA to RGB if needed
         if image.mode == 'RGBA':
             print("Converting RGBA to RGB")
             image = image.convert('RGB')
         
-        print("Starting Tesseract OCR...")
-        # Run Tesseract with both languages
-        text_tess = pytesseract.image_to_string(image, lang='eng+heb')
-        print(f"Tesseract result length: {len(text_tess)}")
+        print("Starting OCR processing...")
+        text = process_image_with_ocr(file.filename)
         
-        print("Starting Dicta OCR...")
-        # Run Dicta (Hebrew only)
-        text_dicta = ocr_dicta(image)
-        print(f"Dicta result length: {len(text_dicta)}")
-
-        # Detect language of each result
-        lang_tess = detect_language(text_tess)
-        lang_dicta = detect_language(text_dicta)
-        print(f"Tesseract detected language: {lang_tess}")
-        print(f"Dicta detected language: {lang_dicta}")
-
-        # Heuristic: If Dicta result is mostly Hebrew and not empty, prefer Dicta.
-        # If Tesseract result is mostly English, prefer Tesseract.
-        # If both are short or empty, return the longer one.
-        if lang_dicta == 'he' and len(text_dicta.strip()) > 10:
-            # If Dicta found Hebrew, but Tesseract found English, combine both
-            if lang_tess == 'en' and len(text_tess.strip()) > 10:
-                print("Combining Hebrew (Dicta) and English (Tesseract) results")
-                return text_dicta + "\n\n" + text_tess
-            print("Using Dicta result (Hebrew)")
-            return text_dicta
-        elif lang_tess == 'en' and len(text_tess.strip()) > 10:
-            print("Using Tesseract result (English)")
-            return text_tess
-        else:
-            # Fallback: return the longer result
-            print("Using longer result as fallback")
-            return text_dicta if len(text_dicta) > len(text_tess) else text_tess
-    except Exception as e:
-        print(f"Error in ocr_best: {str(e)}")
-        raise Exception(f"OCR processing failed: {str(e)}")
-
-@app.route('/api/test', methods=['GET'])
-def test():
-    return jsonify({"status": "ok", "message": "Backend is running"})
-
-@app.route('/api/summarize', methods=['POST', 'OPTIONS'])
-def summarize():
-    if request.method == 'OPTIONS':
-        return '', 204
-        
-    if not llm:
+        if not text.strip():
+            return jsonify({"error": "No text detected"}), 400
+            
+        try:
+            lang = detect(text)
+        except:
+            lang = "unknown"
+            
         return jsonify({
-            'error': 'Model not loaded. Please ensure the model file is present and correctly configured.'
-        }), 500
-
-    try:
-        data = request.json
-        if not data:
-            return jsonify({'error': 'No JSON data received'}), 400
-            
-        text = data.get('text', '')
-        custom_prompt = data.get('prompt', '')
-        print(f"Received text of length: {len(text)}")
-        
-        if not text:
-            return jsonify({'error': 'No text provided'}), 400
-
-        default_prompt = """ל/י כרופא/ה תעסוקתי/ת בכיר/ה.
-	•	התבסס על המידע הקיים במסמכים רפואיים מצורפים (בעברית ובאנגלית).
-	•	ערוך סיכום מקצועי, מובנה ותמציתי של המסמכים, הכולל אבחנות, טיפולים, מגבלות והשלכות על כשירות תעסוקתית.
-	•	בסס את הסיכום על הנחיות וחוקים המופיעים בתקנון קרן הפנסיה העדכני של כלל
-	•	כלול פרטים מזהים כגון שם המטופל, גיל ועיסוק, בהינתן שהמערכת מקומית ותואמת רגולציה.
-	•	ציין אם חלק מהמידע חסר או בלתי קריא בעקבות זיהוי תווים אופטי (OCR).
-	•	סכם את ההיסטוריה הרפואית לפי ציר זמן, ושלב את הסיפור הקליני, ההדמייתי והמעבדתי באופן ברור ומובנה.
-	•	חלק את הסיכום לפסקאות לפי נושאים רפואיים. הימנע מהשערות לא מבוססות, והתמקד במסר תעסוקתי ברור עבור מקבל ההחלטה.
-	•	וודא שהסיכום כתוב בשפה מקצועית, ברורה, רפואית ותעסוקתית כאחד
-
-לבסוף המלץ האם מגיעה נכות לפי תקנון קרן הפנסיה כלל, חלקית או מלאה ולאיזה תקופה"""
-
-        # Split text into chunks if it's too long
-        chunks = split_text_into_chunks(text)
-        summaries = []
-        
-        for i, chunk in enumerate(chunks):
-            print(f"Processing chunk {i+1} of {len(chunks)}")
-            
-            # Prepare the prompt using the custom prompt if provided
-            prompt = f"""{custom_prompt if custom_prompt else default_prompt}
-
-Text to summarize (Part {i+1} of {len(chunks)}):
-{chunk}
-
-Summary:"""
-
-            # Generate summary for this chunk
-            output = llm(
-                prompt,
-                max_tokens=512,
-                temperature=0.7,
-                top_p=0.95,
-                repeat_penalty=1.2,
-                stop=["Text to summarize:", "\n\n"]
-            )
-            
-            chunk_summary = output['choices'][0]['text'].strip()
-            summaries.append(chunk_summary)
-        
-        # Combine all summaries
-        final_summary = "\n\n".join(summaries)
-        
-        return jsonify({
-            'summary': final_summary
+            "text": text,
+            "language": lang
         })
-
-    except Exception as e:
-        print(f"Error in summarize endpoint: {str(e)}")
-        return jsonify({
-            'error': f'Error generating summary: {str(e)}'
-        }), 500
-
-@app.route('/api/ocr', methods=['POST', 'OPTIONS'])
-def process_ocr():
-    if request.method == 'OPTIONS':
-        return '', 204
-
-    try:
-        if 'file' not in request.files:
-            print("Error: No file in request")
-            return jsonify({'error': 'No file provided'}), 400
-
-        file = request.files['file']
-        if file.filename == '':
-            print("Error: Empty filename")
-            return jsonify({'error': 'No file selected'}), 400
-
-        print(f"Processing file: {file.filename}")
         
-        # Read the image file
-        try:
-            image_data = file.read()
-            image = Image.open(io.BytesIO(image_data))
-            print(f"Image opened successfully. Size: {image.size}, Mode: {image.mode}")
-        except Exception as e:
-            print(f"Error opening image: {str(e)}")
-            return jsonify({'error': f'Error opening image: {str(e)}'}), 400
-
-        # Process the image using ocr_best
-        try:
-            print("Starting OCR processing...")
-            result = ocr_best(image)
-            print(f"OCR completed. Result length: {len(result)}")
-            
-            if not result.strip():
-                print("Warning: Empty OCR result")
-                return jsonify({
-                    'text': '',
-                    'language': 'unknown',
-                    'warning': 'No text was detected in the image'
-                })
-            
-            detected_lang = detect_language(result)
-            print(f"Detected language: {detected_lang}")
-            
-            return jsonify({
-                'text': result,
-                'language': detected_lang
-            })
-        except Exception as e:
-            print(f"Error during OCR processing: {str(e)}")
-            return jsonify({'error': f'Error during OCR processing: {str(e)}'}), 500
-
     except Exception as e:
-        print(f"Unexpected error in OCR endpoint: {str(e)}")
-        return jsonify({'error': f'Unexpected error: {str(e)}'}), 500
+        print(f"Error in OCR endpoint: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    # Add debug output for the model path
-    print(f"Starting server with model path: {MODEL_PATH}")
-    print(f"Model file exists: {os.path.exists(MODEL_PATH)}")
-    
-    app.run(debug=True, port=5001, host='0.0.0.0') 
+    try:
+        print(f"Starting server with model path: {MODEL_PATH}")
+        print(f"Model file exists: {os.path.exists(MODEL_PATH)}")
+        
+        # Try to load model with reduced memory footprint
+        load_model()
+        
+        # Use a specific port for the application
+        PORT = 5006
+        
+        # Check if port is in use
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            sock.bind(('0.0.0.0', PORT))
+            sock.close()
+            print(f"Port {PORT} is available")
+        except OSError:
+            print(f"Port {PORT} is in use, attempting to kill existing process...")
+            subprocess.run(['lsof', '-ti', f':{PORT}', '-sTCP:LISTEN', '-kill'], capture_output=True)
+            print(f"Killed process on port {PORT}")
+        
+        print(f"Starting server on port {PORT}")
+        app.run(debug=False, port=PORT, host='0.0.0.0')
+        
+    except Exception as e:
+        print(f"Fatal error: {str(e)}")
+        # Try different ports if the default is in use
+        ports = [5006, 5007, 5008, 5009]
+        for port in ports:
+            try:
+                print(f"Attempting to start server on port {port}")
+                app.run(debug=False, port=port, host='0.0.0.0')
+                break
+            except OSError as e:
+                if "Address already in use" in str(e):
+                    print(f"Port {port} is in use, trying next port...")
+                    continue
+                else:
+                    raise
+    except Exception as e:
+        print(f"Fatal error: {str(e)}")
+        cleanup_resources()
+        sys.exit(1) 

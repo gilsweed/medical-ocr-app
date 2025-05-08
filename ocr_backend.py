@@ -9,6 +9,10 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    return jsonify({'status': 'healthy'}), 200
+
 def is_hebrew(text):
     hebrew_chars = sum(1 for c in text if '\u0590' <= c <= '\u05FF')
     return hebrew_chars > 0

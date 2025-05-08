@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Tesseract from 'tesseract.js';
 import * as pdfjsLib from 'pdfjs-dist';
 import './App.css';
+import config from './config';
 
 function App() {
   useEffect(() => {
@@ -56,6 +57,9 @@ function App() {
   const [showSpinner, setShowSpinner] = useState(false);
   const [processedPages, setProcessedPages] = useState(0);
   const [globalItemIndex, setGlobalItemIndex] = useState(0);
+  const [serverStatus, setServerStatus] = useState('checking');
+  const [retryCount, setRetryCount] = useState(0);
+  const [isRetrying, setIsRetrying] = useState(false);
 
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
@@ -78,6 +82,35 @@ function App() {
       setProcessedPages(0);
       setTotalPages(0);
     }
+  };
+
+  const handleFileButtonClick = (e) => {
+    e.preventDefault();
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.accept = '.pdf,.png,.jpg,.jpeg,.tiff,.tif,.bmp';
+    input.style.display = 'none';
+    
+    // Set capture to null to show all files
+    input.capture = null;
+    
+    // Add the input to the document
+    document.body.appendChild(input);
+    
+    // Set up the change handler
+    input.onchange = (event) => {
+      handleFileChange(event);
+      document.body.removeChild(input);
+    };
+    
+    // Create and dispatch a click event
+    const clickEvent = new MouseEvent('click', {
+      view: window,
+      bubbles: true,
+      cancelable: true
+    });
+    input.dispatchEvent(clickEvent);
   };
 
   // Helper to downscale an image to max 1200px width/height
@@ -246,7 +279,7 @@ function App() {
                 formData.append('file', blob, `page_${pageNum}.png`);
                 
                 // Send to backend
-                const ocrResponse = await fetch('http://localhost:5001/api/ocr', {
+                const ocrResponse = await fetch(`${config.API_BASE_URL}${config.API_ENDPOINTS.OCR}`, {
                   method: 'POST',
                   body: formData
                 });
@@ -281,7 +314,7 @@ function App() {
             formData.append('file', file);
             
             // Send to backend
-            const ocrResponse = await fetch('http://localhost:5001/api/ocr', {
+            const ocrResponse = await fetch(`${config.API_BASE_URL}${config.API_ENDPOINTS.OCR}`, {
               method: 'POST',
               body: formData
             });
@@ -384,7 +417,7 @@ function App() {
         for (let i = 0; i < chunks.length; i++) {
           const chunk = chunks[i];
           setSummary(`Summarizing chunk ${i + 1} of ${chunks.length}...`);
-          const response = await fetch('http://localhost:5001/api/summarize', {
+          const response = await fetch(`${config.API_BASE_URL}${config.API_ENDPOINTS.SUMMARIZE}`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -404,7 +437,7 @@ function App() {
         setSummary(allSummaries.join('\n\n'));
       } else {
         // Normal summarization
-        const response = await fetch('http://localhost:5001/api/summarize', {
+        const response = await fetch(`${config.API_BASE_URL}${config.API_ENDPOINTS.SUMMARIZE}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -455,11 +488,64 @@ function App() {
     </div>
   );
 
+  // Add server health check
+  useEffect(() => {
+    const checkServerHealth = async () => {
+      try {
+        const response = await fetch(`${config.API_BASE_URL}/api/health`);
+        if (response.ok) {
+          setServerStatus('connected');
+          setRetryCount(0);
+        } else {
+          setServerStatus('error');
+        }
+      } catch (error) {
+        setServerStatus('error');
+      }
+    };
+
+    checkServerHealth();
+    const interval = setInterval(checkServerHealth, 30000); // Check every 30 seconds
+    return () => clearInterval(interval);
+  }, []);
+
+  // Add retry mechanism
+  const retryConnection = async () => {
+    setIsRetrying(true);
+    setRetryCount(prev => prev + 1);
+    try {
+      const response = await fetch(`${config.API_BASE_URL}/api/health`);
+      if (response.ok) {
+        setServerStatus('connected');
+        setRetryCount(0);
+      }
+    } catch (error) {
+      setServerStatus('error');
+    }
+    setIsRetrying(false);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <div className="header-content">
           <h1>OCR Document Scanner</h1>
+          <div className="server-status">
+            <span className={`status-indicator ${serverStatus}`}>
+              {serverStatus === 'checking' && '🔄 Checking connection...'}
+              {serverStatus === 'connected' && '✅ Connected'}
+              {serverStatus === 'error' && '❌ Connection error'}
+            </span>
+            {serverStatus === 'error' && (
+              <button 
+                onClick={retryConnection}
+                disabled={isRetrying}
+                className="retry-button"
+              >
+                {isRetrying ? 'Retrying...' : 'Retry Connection'}
+              </button>
+            )}
+          </div>
           <button 
             className="settings-button"
             onClick={() => setIsSettingsOpen(!isSettingsOpen)}
@@ -482,16 +568,18 @@ function App() {
             <input
               type="file"
               onChange={handleFileChange}
-              accept="image/*,.pdf"
-              className="file-input"
               multiple
-              id="file-input"
+              accept=".txt"
+              style={{
+                width: '100%',
+                padding: '10px',
+                backgroundColor: '#3a7d44',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
             />
-            <label htmlFor="file-input" className="file-input-label">
-              {selectedFiles.length > 0 
-                ? `${selectedFiles.length} file(s) selected` 
-                : 'Choose Files'}
-            </label>
           </div>
           <button 
             onClick={performOCR}
@@ -558,6 +646,59 @@ function App() {
     </div>
   );
 }
+
+// Add new styles
+const newStyles = `
+.server-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.status-indicator {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.status-indicator.checking {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.status-indicator.connected {
+  background-color: #e6ffe6;
+  color: #006600;
+}
+
+.status-indicator.error {
+  background-color: #ffe6e6;
+  color: #cc0000;
+}
+
+.retry-button {
+  padding: 5px 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.retry-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.retry-button:hover:not(:disabled) {
+  background-color: #45a049;
+}
+`;
+
+const styleSheet = document.createElement("style");
+styleSheet.innerText = newStyles;
+document.head.appendChild(styleSheet);
 
 export default App;
 

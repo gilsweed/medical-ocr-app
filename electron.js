@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
 const isDev = process.env.NODE_ENV === 'development';
@@ -50,36 +50,29 @@ function getPythonPort() {
 const PYTHON_PORT = getPythonPort();
 
 function createWindow() {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
-    webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js')
-    },
-    icon: path.join(__dirname, 'assets', 'icon.png'),
-    title: 'OCR Scanner'
-  });
+    // Create the browser window.
+    mainWindow = new BrowserWindow({
+        width: 1200,
+        height: 800,
+        icon: path.join(__dirname, 'backend', 'assets', 'icon.png'),
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        }
+    });
 
-  // Set dock icon
-  if (process.platform === 'darwin') {
-    app.dock.setIcon(path.join(__dirname, 'assets', 'icon.png'));
-  }
+    // Set dock icon for macOS
+    if (process.platform === 'darwin') {
+        app.dock.setIcon(path.join(__dirname, 'backend', 'assets', 'icon.png'));
+    }
 
-  // Load the app
-  if (isDev) {
-    mainWindow.loadURL('http://localhost:3000');
-    mainWindow.webContents.openDevTools();
-  } else {
-    mainWindow.loadFile(path.join(__dirname, 'build/index.html'));
-  }
+    // Load the HTML file
+    mainWindow.loadFile('index.html');
 
-  // Log any errors that occur during loading
-  mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
-    console.error('Failed to load:', errorCode, errorDescription);
-  });
+    // Log any errors that occur during loading
+    mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+        console.error('Failed to load:', errorCode, errorDescription);
+    });
 }
 
 // Clean up Python process
@@ -127,10 +120,10 @@ async function startPythonBackend() {
                 cwd: backendDir,
                 env: {
                     ...process.env,
-                    PYTHONUNBUFFERED: '1',  // Ensure Python output is not buffered
-                    PYTHONPATH: backendDir,  // Add backend directory to Python path
-                    PYTHONWARNINGS: 'ignore',  // Suppress Python warnings
-                    PYTHONFAULTHANDLER: '1'  // Enable Python fault handler
+                    PYTHONUNBUFFERED: '1',
+                    PYTHONPATH: backendDir,
+                    PYTHONWARNINGS: 'ignore',
+                    PYTHONFAULTHANDLER: '1'
                 }
             });
 
@@ -175,7 +168,6 @@ async function startPythonBackend() {
             });
 
             pythonProcess.stderr.on('data', (data) => {
-                // Only treat as error if it's not a startup log or info message
                 const logLine = data.toString();
                 if (logLine.includes('ERROR') || 
                     logLine.includes('CRITICAL') ||
@@ -215,37 +207,24 @@ async function startPythonBackend() {
     });
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
+// This method will be called when Electron has finished initialization
 app.whenReady().then(async () => {
-  try {
-    // Wait for webpack server to be ready
-    await waitOn({
-      resources: ['http://localhost:3000'],
-      timeout: 60000,
-      validateStatus: (status) => status === 200,
-      delay: 1000, // Wait 1 second before starting to check
-      interval: 500 // Check every 500ms
-    });
-    console.log('Webpack server is ready');
-
-    // Start Python backend
-    await startPythonBackend();
-    
-    // Create window
-    createWindow();
-  } catch (error) {
-    console.error('Failed to start application:', error);
-    app.quit();
-  }
-
-  app.on('activate', () => {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+    try {
+        // Start Python backend
+        await startPythonBackend();
+        
+        // Create window
+        createWindow();
+    } catch (error) {
+        console.error('Failed to start application:', error);
+        app.quit();
     }
-  });
+
+    app.on('activate', () => {
+        if (BrowserWindow.getAllWindows().length === 0) {
+            createWindow();
+        }
+    });
 });
 
 // Handle app quit
@@ -274,49 +253,47 @@ process.on('SIGINT', () => {
 
 // IPC handlers for communication between renderer and main process
 ipcMain.handle('select-file', async () => {
-  const { dialog } = require('electron');
-  const result = await dialog.showOpenDialog(mainWindow, {
-    properties: ['openFile'],
-    filters: [
-      { name: 'Images', extensions: ['jpg', 'jpeg', 'png'] },
-      { name: 'PDFs', extensions: ['pdf'] }
-    ]
-  });
-  return result.filePaths[0];
+    const result = await dialog.showOpenDialog(mainWindow, {
+        properties: ['openFile'],
+        filters: [
+            { name: 'Images', extensions: ['jpg', 'jpeg', 'png'] },
+            { name: 'PDFs', extensions: ['pdf'] }
+        ]
+    });
+    return result.filePaths[0];
 });
 
 // IPC handlers for OCR processing
 ipcMain.handle('process-image', async (event, filePath) => {
-  try {
-    console.log('Processing image:', filePath);
-    responseSent = false;
+    try {
+        console.log('Processing image:', filePath);
+        responseSent = false;
 
-    const response = await fetch(`http://localhost:${PYTHON_PORT}/api/process`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ filePath }),
-    });
+        const response = await fetch(`http://localhost:${PYTHON_PORT}/api/process`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ filePath }),
+        });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to process file');
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to process file');
+        }
+
+        const result = await response.json();
+        responseSent = true;
+        return result;
+    } catch (error) {
+        console.error('Error processing image:', error);
+        if (!responseSent) {
+            return {
+                success: false,
+                error: error.message || 'Failed to process file'
+            };
+        }
+        console.error('Error occurred after response was sent:', error);
+        return null;
     }
-
-    const result = await response.json();
-    responseSent = true;
-    return result;
-  } catch (error) {
-    console.error('Error processing image:', error);
-    if (!responseSent) {
-      return {
-        success: false,
-        error: error.message || 'Failed to process file'
-      };
-    }
-    // If response was already sent, just log the error
-    console.error('Error occurred after response was sent:', error);
-    return null;
-  }
 }); 

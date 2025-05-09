@@ -4,11 +4,11 @@ import tempfile
 import atexit
 
 # Server socket
-bind = "0.0.0.0:0"  # Let supervisor handle port assignment
+bind = "0.0.0.0:8080"
 backlog = 2048
 
 # Worker processes
-workers = 1  # Single worker to avoid multiprocessing issues
+workers = multiprocessing.cpu_count() * 2 + 1
 worker_class = 'sync'
 worker_connections = 1000
 timeout = 30
@@ -17,10 +17,10 @@ keepalive = 2
 # Logging
 accesslog = '-'
 errorlog = '-'
-loglevel = 'info'  # Changed from debug to info to reduce noise
+loglevel = 'info'
 
 # Process naming
-proc_name = 'ocr_server'
+proc_name = 'ocr_app'
 
 # Server mechanics
 daemon = False
@@ -70,4 +70,7 @@ max_worker_lifetime_jitter = 60  # Add some randomness to worker restarts
 worker_tmp_dir = tempfile.gettempdir()  # Use system temp directory
 
 # Register cleanup handler
-atexit.register(on_exit) 
+atexit.register(on_exit)
+
+# Application
+wsgi_app = 'app:app' 

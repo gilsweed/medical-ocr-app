@@ -29,8 +29,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-backend/venv/
-env/
 build/
 develop-eggs/
 dist/
@@ -46,6 +44,10 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
+.env
+venv/
+ENV/
 
 # IDE
 .idea/
@@ -55,3 +57,9 @@ wheels/
 
 # Llama model files
 backend/models/*.gguf
+
+# Project specific
+backend/port.txt
+backend/server*.pid
+backend/server*.port
+archive/

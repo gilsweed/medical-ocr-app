@@ -1,76 +1,49 @@
-# Doctor Insurance OCR and Analysis System
+# OCR Scanner Electron App
 
-A web application for processing medical documents using OCR and AI-powered summarization, specifically designed for insurance assessments.
+A desktop application for OCR scanning and text processing, built with Electron, React, and Python.
 
-## Features
+## Project Status
 
-- OCR processing for both images and PDF files
-- Hebrew and English text recognition
-- AI-powered text summarization using Llama 2
-- Customizable summary settings
-- Progress tracking for both OCR and summarization
-- Persistent user preferences
+This project is currently in development, transitioning from a web-based application to a desktop application using Electron. The previous web application has been archived and can be found in the `archive/` directory.
 
-## Technical Stack
+## Project Structure
 
-- Frontend: React.js
-- Backend: Flask (Python)
-- OCR: Tesseract.js
-- PDF Processing: PDF.js
-- AI Model: Llama 2 (llama-2-7b-chat.Q2_K.gguf)
-
-## Setup
-
-### Frontend
-
-1. Install dependencies:
-```bash
-npm install
+```
+.
+├── archive/           # Archived code from previous web application
+├── .git/             # Version control
+├── .gitignore        # Git ignore rules
+├── project_state.json # Project tracking and state management
+└── README.md         # This file
 ```
 
-2. Start the development server:
-```bash
-npm start
-```
+## Development Status
 
-### Backend
+- [x] Archive previous web application
+- [ ] Set up new Electron project structure
+- [ ] Implement IPC communication
+- [ ] Port OCR processing to Python backend
+- [ ] Adapt React frontend for Electron
+- [ ] Implement file system operations
 
-1. Navigate to the backend directory:
-```bash
-cd backend
-```
+## Dependencies
 
-2. Create and activate a virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+### Python
+- pytesseract (OCR processing)
+- pdf2image (PDF handling)
+- ollama (AI text analysis)
+- dicta-api (Hebrew text processing)
 
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+### Node.js
+- electron (Desktop application framework)
+- react (UI framework)
+- pdfjs-dist (PDF processing)
+- tesseract.js (OCR processing)
 
-4. Download the Llama 2 model:
-- Download `llama-2-7b-chat.Q2_K.gguf`
-- Place it in `backend/models/`
+## Getting Started
 
-5. Start the Flask server:
-```bash
-python app.py
-```
+*Note: This section will be updated as the project progresses.*
 
-## Usage
+## License
 
-1. Select the language for OCR (Hebrew, English, or both)
-2. Upload an image or PDF file
-3. Click "Scan Document" to process the file
-4. Once OCR is complete, click "Summarize Text" to generate an AI summary
-5. Adjust summary settings using the gear icon ⚙️
-
-## Configuration
-
-- OCR language can be selected for each document
-- Summary language preference is stored in browser localStorage
-- Custom prompts can be configured for summarization
-- Backend port can be configured (default: 5001)
+[Your License Here]

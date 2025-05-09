@@ -19,8 +19,8 @@ multiprocessing.set_start_method('spawn', force=True)
 
 # Configure logging with more detail
 logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=LOG_LEVEL,
+    format=LOG_FORMAT
 )
 logger = logging.getLogger(__name__)
 
@@ -184,32 +184,6 @@ def after_request(response):
     """Mark response as sent."""
     g.response_sent = True
     return response
-
-if __name__ == '__main__':
-    try:
-        logger.info(f"Starting server on {HOST}:{PORT}")
-        logger.debug("Server configuration:")
-        logger.debug(f"  Host: {HOST}")
-        logger.debug(f"  Port: {PORT}")
-        logger.debug(f"  Debug mode: True")
-        logger.debug(f"  Reloader: False")
-        
-        # Add explicit error handling for the server startup
-        try:
-            logger.info("Attempting to start server...")
-            # Use Flask's development server with proper error handling
-            from werkzeug.serving import run_simple
-            run_simple(HOST, PORT, app, use_debugger=True, use_reloader=False)
-        except Exception as server_error:
-            logger.error(f"Server startup failed: {str(server_error)}")
-            logger.error(f"Server error traceback: {traceback.format_exc()}")
-            signal_handler(signal.SIGTERM, None)
-            sys.exit(1)
-    except Exception as e:
-        logger.error(f"Failed to start server: {str(e)}")
-        logger.error(f"Traceback: {traceback.format_exc()}")
-        signal_handler(signal.SIGTERM, None)
-        sys.exit(1)
 
 # Expose the WSGI application for Gunicorn
 application = app 

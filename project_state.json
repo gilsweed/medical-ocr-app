@@ -1,11 +1,11 @@
 {
   "project": {
     "name": "OCR Scanner Electron App",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "status": "in_progress",
-    "last_updated": "2024-03-19T15:00:00Z",
-    "last_session": "2024-03-19T15:00:00Z",
-    "session_count": 6,
+    "last_updated": "2024-05-09T12:00:00Z",
+    "last_session": "2024-05-09T12:00:00Z",
+    "session_count": 7,
     "summary": "A desktop application for OCR processing of medical documents, built with Electron and Python backend",
     "description": "The application has been refactored from a web-based solution to a desktop application using Electron. The core infrastructure has been completed, including process management, server configuration, and startup synchronization. The application now features a pure Electron frontend with HTML/CSS/JS instead of React, and maintains the Python backend for OCR processing capabilities.",
     "version_history": [
@@ -36,12 +36,26 @@
           "Updated component status tracking",
           "Added detailed component descriptions"
         ]
+      },
+      {
+        "version": "1.0.2",
+        "date": "2024-05-09T12:00:00Z",
+        "summary": "Simplified server architecture and improved stability",
+        "description": "Removed Gunicorn in favor of Flask's development server for better development experience and simplified process management. Improved server stability and cleanup procedures.",
+        "changes": [
+          "Removed Gunicorn and its configuration",
+          "Switched to Flask's development server",
+          "Simplified process management",
+          "Improved server stability",
+          "Enhanced cleanup procedures",
+          "Updated port management"
+        ]
       }
     ],
     "components": {
       "backend": {
         "status": "ready",
-        "description": "Python backend with Flask server and Gunicorn configuration",
+        "description": "Python backend with Flask development server",
         "features": {
           "implemented": [
             "OCR processing",
@@ -82,7 +96,7 @@
       },
       "process_management": {
         "status": "ready",
-        "description": "Robust process management system handling server lifecycle",
+        "description": "Simplified process management system handling server lifecycle",
         "features": {
           "implemented": [
             "Server startup",
@@ -111,6 +125,14 @@
         "impact": "minor",
         "status": "resolved",
         "notes": "Improved process cleanup with better signal handling and resource management"
+      },
+      {
+        "id": "PROC-002",
+        "description": "Semaphore cleanup warnings",
+        "severity": "low",
+        "impact": "none",
+        "status": "monitoring",
+        "notes": "Non-critical warnings about semaphore cleanup during shutdown"
       }
     ]
   },
@@ -156,12 +178,12 @@
       {
         "name": "core_infrastructure",
         "status": "completed",
-        "completion_date": "2024-03-19T14:00:00Z",
+        "completion_date": "2024-05-09T12:00:00Z",
         "tasks": [
           {
             "name": "Process management implementation",
             "status": "completed",
-            "completion_date": "2024-03-19T14:00:00Z",
+            "completion_date": "2024-05-09T12:00:00Z",
             "subtasks": [
               {
                 "name": "Server process management",
@@ -180,7 +202,7 @@
           {
             "name": "Server configuration",
             "status": "completed",
-            "completion_date": "2024-03-19T14:00:00Z"
+            "completion_date": "2024-05-09T12:00:00Z"
           }
         ]
       },
@@ -249,27 +271,8 @@
           "name": "Implement file validation",
           "status": "pending",
           "priority": "high"
-        },
-        {
-          "name": "Add progress tracking",
-          "status": "pending",
-          "priority": "medium"
         }
       ]
-    },
-    {
-      "id": "step_4",
-      "description": "Adapt React frontend for Electron",
-      "priority": "medium",
-      "status": "pending",
-      "dependencies": ["step_1", "step_2"]
-    },
-    {
-      "id": "step_5",
-      "description": "Implement file system operations",
-      "priority": "medium",
-      "status": "pending",
-      "dependencies": ["step_1", "step_2"]
     }
   ],
   "decisions": [

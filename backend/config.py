@@ -11,7 +11,6 @@ from pathlib import Path
 # Get the absolute path of the backend directory
 BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
 PORT_FILE = os.path.join(BACKEND_DIR, 'port.txt')
-PID_FILE = os.path.join(BACKEND_DIR, 'server.pid')
 
 logger = logging.getLogger(__name__)
 
@@ -23,12 +22,6 @@ def cleanup_resources():
         if port_file.exists():
             port_file.unlink()
             logger.info("Removed port file")
-
-        # Remove PID file
-        pid_file = Path(PID_FILE)
-        if pid_file.exists():
-            pid_file.unlink()
-            logger.info("Removed PID file")
 
         # Kill any orphaned Python processes
         current_pid = os.getpid()
@@ -120,15 +113,6 @@ def save_port_to_file():
         logger.error(f"Failed to save port to file: {e}")
         raise
 
-def save_pid_to_file():
-    """Save the current process ID to a file."""
-    try:
-        with open(PID_FILE, 'w') as f:
-            f.write(str(os.getpid()))
-        logger.info(f"PID saved to {PID_FILE}")
-    except Exception as e:
-        logger.error(f"Error saving PID to file: {e}")
-
 # Register cleanup function
 atexit.register(cleanup_resources)
 
@@ -140,7 +124,4 @@ def signal_handler(signum, frame):
     os._exit(0)
 
 signal.signal(signal.SIGTERM, signal_handler)
-signal.signal(signal.SIGINT, signal_handler)
-
-# Save PID when module is imported
-save_pid_to_file() 
+signal.signal(signal.SIGINT, signal_handler) 

@@ -8,6 +8,9 @@ from pathlib import Path
 import psutil
 import socket
 import time
+import tempfile
+import shutil
+from main import app
 
 # Configure logging
 logging.basicConfig(
@@ -19,9 +22,10 @@ logger = logging.getLogger(__name__)
 class ProcessManager:
     def __init__(self):
         self.server_process = None
-        self.pid_file = Path("server.pid")
         self.port_file = Path("port.txt")
+        self.temp_dir = tempfile.mkdtemp(prefix="ocr_app_")
         self.setup_signal_handlers()
+        self.cleanup_old_processes()
 
     def setup_signal_handlers(self):
         signal.signal(signal.SIGTERM, self.handle_signal)
@@ -32,6 +36,23 @@ class ProcessManager:
         logger.info(f"Received signal {signum}")
         self.cleanup()
         sys.exit(0)
+
+    def cleanup_old_processes(self):
+        """Clean up any existing Python processes from previous runs."""
+        try:
+            for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+                try:
+                    if proc.info['name'] and 'python' in proc.info['name'].lower():
+                        cmdline = proc.info['cmdline']
+                        if cmdline and any('main.py' in cmd for cmd in cmdline if cmd):
+                            if proc.pid != os.getpid():
+                                logger.info(f"Terminating old process {proc.pid}")
+                                proc.terminate()
+                                proc.wait(timeout=1)
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    pass
+        except Exception as e:
+            logger.error(f"Error cleaning up old processes: {e}")
 
     def find_free_port(self, start_port=8080, max_port=9000):
         for port in range(start_port, max_port):
@@ -53,24 +74,23 @@ class ProcessManager:
             with open(self.port_file, 'w') as f:
                 f.write(str(port))
 
-            # Start Gunicorn server
-            cmd = [
-                "gunicorn",
-                "--config", "gunicorn.conf.py",
-                f"--bind", f"0.0.0.0:{port}",
-                "app:app"
-            ]
+            # Set up environment variables
+            env = os.environ.copy()
+            env.update({
+                'PYTHONUNBUFFERED': '1',
+                'PYTHONPATH': os.getcwd(),
+                'TEMP_DIR': self.temp_dir,
+                'FLASK_APP': 'main.py',
+                'FLASK_ENV': 'development'
+            })
 
+            # Start Flask development server
             self.server_process = multiprocessing.Process(
                 target=self._run_server,
-                args=(cmd,),
+                args=(port, env),
                 daemon=True
             )
             self.server_process.start()
-
-            # Save PID to file
-            with open(self.pid_file, 'w') as f:
-                f.write(str(self.server_process.pid))
 
             logger.info(f"Started server with PID {self.server_process.pid}")
             return self.server_process
@@ -80,9 +100,14 @@ class ProcessManager:
             self.cleanup()
             raise
 
-    def _run_server(self, cmd):
+    def _run_server(self, port, env):
         try:
-            os.execvp(cmd[0], cmd)
+            app.run(
+                host='0.0.0.0',
+                port=port,
+                debug=False,
+                use_reloader=False
+            )
         except Exception as e:
             logger.error(f"Server error: {e}")
             sys.exit(1)
@@ -93,26 +118,48 @@ class ProcessManager:
             # Terminate server process
             if self.server_process and self.server_process.is_alive():
                 logger.info(f"Terminating server process (PID: {self.server_process.pid})...")
-                self.server_process.terminate()
-                self.server_process.join(timeout=5)
-                if self.server_process.is_alive():
-                    self.server_process.kill()
-
-            # Remove PID file
-            if self.pid_file.exists():
-                self.pid_file.unlink()
+                try:
+                    self.server_process.terminate()
+                    self.server_process.join(timeout=5)
+                    if self.server_process.is_alive():
+                        self.server_process.kill()
+                except Exception as e:
+                    logger.error(f"Error terminating process: {e}")
 
             # Remove port file
             if self.port_file.exists():
-                self.port_file.unlink()
-
-            # Clean up any remaining Gunicorn processes
-            for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
                 try:
-                    if 'gunicorn' in ' '.join(proc.info['cmdline'] or []):
-                        proc.terminate()
-                except (psutil.NoSuchProcess, psutil.AccessDenied):
-                    pass
+                    self.port_file.unlink()
+                except Exception as e:
+                    logger.error(f"Error removing port file: {e}")
+
+            # Clean up temp directory
+            try:
+                if os.path.exists(self.temp_dir):
+                    shutil.rmtree(self.temp_dir, ignore_errors=True)
+            except Exception as e:
+                logger.error(f"Error cleaning up temp directory: {e}")
+
+            # Clean up any remaining Python processes
+            try:
+                for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+                    try:
+                        if proc.info['name'] and 'python' in proc.info['name'].lower():
+                            cmdline = proc.info['cmdline']
+                            if cmdline and any('main.py' in cmd for cmd in cmdline if cmd):
+                                if proc.pid != os.getpid():
+                                    proc.terminate()
+                    except (psutil.NoSuchProcess, psutil.AccessDenied):
+                        pass
+            except Exception as e:
+                logger.error(f"Error cleaning up remaining processes: {e}")
+
+            # Clean up multiprocessing resources
+            try:
+                if hasattr(multiprocessing, 'resource_tracker'):
+                    multiprocessing.resource_tracker._resource_tracker._stop()
+            except Exception as e:
+                logger.error(f"Error cleaning up multiprocessing resources: {e}")
 
             logger.info("Cleanup completed successfully")
 

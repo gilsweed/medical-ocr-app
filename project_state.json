@@ -65,6 +65,20 @@
           "Moved app to /Applications for Launchpad/Dock integration",
           "Backed up and committed all changes to git"
         ]
+      },
+      {
+        "version": "1.2.0",
+        "date": "2024-05-10T00:15:00Z",
+        "summary": "UI improvements, PDF selection fix, port bug fix, and Dock/Desktop packaging mission documented.",
+        "description": "Enhanced the user interface with a modern grey theme, improved drag-and-drop and file selection, and ensured both images and PDFs can be selected. Fixed a bug where the backend port was not awaited, resolving the '[object Promise]' error. Documented the ongoing mission to make the packaged app work from the Dock/Desktop, with the current workaround being to run the app from Terminal. All changes committed to git.",
+        "changes": [
+          "Changed app and window background to grey for a modern look",
+          "Ensured PDF files can be selected in the file picker",
+          "Fixed port Promise bug in process-image handler",
+          "Improved error handling and feedback in the UI",
+          "Documented Dock/Desktop packaging mission in project pipeline",
+          "Committed all changes to git"
+        ]
       }
     ],
     "components": {

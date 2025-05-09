@@ -7,7 +7,7 @@ import multiprocessing
 from pathlib import Path
 import psutil
 import socket
-import subprocess
+import time
 
 # Configure logging
 logging.basicConfig(
@@ -18,22 +18,22 @@ logger = logging.getLogger(__name__)
 
 class ProcessManager:
     def __init__(self):
-        self.process = None
-        self.port = None
-        self.pid_file = None
-        self._setup_signal_handlers()
+        self.server_process = None
+        self.pid_file = Path("server.pid")
+        self.port_file = Path("port.txt")
+        self.setup_signal_handlers()
 
-    def _setup_signal_handlers(self):
-        signal.signal(signal.SIGTERM, self._handle_signal)
-        signal.signal(signal.SIGINT, self._handle_signal)
+    def setup_signal_handlers(self):
+        signal.signal(signal.SIGTERM, self.handle_signal)
+        signal.signal(signal.SIGINT, self.handle_signal)
         atexit.register(self.cleanup)
 
-    def _handle_signal(self, signum, frame):
+    def handle_signal(self, signum, frame):
         logger.info(f"Received signal {signum}")
         self.cleanup()
         sys.exit(0)
 
-    def find_free_port(self, start_port=8080, max_port=8090):
+    def find_free_port(self, start_port=8080, max_port=9000):
         for port in range(start_port, max_port):
             try:
                 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -41,61 +41,72 @@ class ProcessManager:
                     return port
             except OSError:
                 continue
-        raise RuntimeError("No free ports available")
+        raise RuntimeError("No free ports found")
 
     def start_server(self):
         try:
-            self.port = self.find_free_port()
-            logger.info(f"Using port {self.port}")
+            # Find a free port
+            port = self.find_free_port()
+            logger.info(f"Using port {port}")
 
-            # Create PID file
-            self.pid_file = Path(f"server_{self.port}.pid")
-            with open(self.pid_file, 'w') as f:
-                f.write(str(os.getpid()))
+            # Save port to file
+            with open(self.port_file, 'w') as f:
+                f.write(str(port))
 
-            # Start Gunicorn
+            # Start Gunicorn server
             cmd = [
-                'gunicorn',
-                '--config', 'gunicorn.conf.py',
-                '--bind', f'0.0.0.0:{self.port}',
-                'app:app'
+                "gunicorn",
+                "--config", "gunicorn.conf.py",
+                f"--bind", f"0.0.0.0:{port}",
+                "app:app"
             ]
 
-            self.process = subprocess.Popen(
-                cmd,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                preexec_fn=os.setsid
+            self.server_process = multiprocessing.Process(
+                target=self._run_server,
+                args=(cmd,),
+                daemon=True
             )
+            self.server_process.start()
 
-            logger.info(f"Started server with PID {self.process.pid}")
-            return True
+            # Save PID to file
+            with open(self.pid_file, 'w') as f:
+                f.write(str(self.server_process.pid))
+
+            logger.info(f"Started server with PID {self.server_process.pid}")
+            return self.server_process
 
         except Exception as e:
-            logger.error(f"Failed to start server: {e}")
+            logger.error(f"Error starting server: {e}")
             self.cleanup()
-            return False
+            raise
+
+    def _run_server(self, cmd):
+        try:
+            os.execvp(cmd[0], cmd)
+        except Exception as e:
+            logger.error(f"Server error: {e}")
+            sys.exit(1)
 
     def cleanup(self):
+        logger.info("Starting cleanup process...")
         try:
-            logger.info("Starting cleanup process...")
-
-            # Kill the server process
-            if self.process:
-                logger.info(f"Terminating server process (PID: {self.process.pid})...")
-                try:
-                    os.killpg(os.getpgid(self.process.pid), signal.SIGTERM)
-                    self.process.wait(timeout=5)
-                except ProcessLookupError:
-                    logger.error("Process already terminated")
-                except subprocess.TimeoutExpired:
-                    os.killpg(os.getpgid(self.process.pid), signal.SIGKILL)
+            # Terminate server process
+            if self.server_process and self.server_process.is_alive():
+                logger.info(f"Terminating server process (PID: {self.server_process.pid})...")
+                self.server_process.terminate()
+                self.server_process.join(timeout=5)
+                if self.server_process.is_alive():
+                    self.server_process.kill()
 
             # Remove PID file
-            if self.pid_file and self.pid_file.exists():
+            if self.pid_file.exists():
                 self.pid_file.unlink()
 
-            # Clean up any remaining processes
+            # Remove port file
+            if self.port_file.exists():
+                self.port_file.unlink()
+
+            # Clean up any remaining Gunicorn processes
             for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
                 try:
                     if 'gunicorn' in ' '.join(proc.info['cmdline'] or []):
@@ -110,13 +121,14 @@ class ProcessManager:
 
 def main():
     manager = ProcessManager()
-    if manager.start_server():
-        try:
-            manager.process.wait()
-        except KeyboardInterrupt:
-            pass
-        finally:
-            manager.cleanup()
+    try:
+        manager.start_server()
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        logger.info("Received keyboard interrupt")
+    finally:
+        manager.cleanup()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main() 

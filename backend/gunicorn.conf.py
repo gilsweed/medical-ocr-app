@@ -15,16 +15,16 @@ timeout = 30
 keepalive = 2
 
 # Logging
-accesslog = '-'
-errorlog = '-'
-loglevel = 'info'
+accesslog = "access.log"
+errorlog = "error.log"
+loglevel = "info"
 
 # Process naming
-proc_name = 'ocr_app'
+proc_name = "ocr_app"
 
 # Server mechanics
 daemon = False
-pidfile = None
+pidfile = "server.pid"
 umask = 0
 user = None
 group = None
@@ -73,4 +73,4 @@ worker_tmp_dir = tempfile.gettempdir()  # Use system temp directory
 atexit.register(on_exit)
 
 # Application
-wsgi_app = 'app:app' 
+wsgi_app = "app:app" 

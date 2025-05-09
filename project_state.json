@@ -1,13 +1,13 @@
 {
   "project": {
     "name": "OCR Scanner Electron App",
-    "version": "1.0.2",
+    "version": "1.1.0",
     "status": "in_progress",
-    "last_updated": "2024-05-09T12:00:00Z",
-    "last_session": "2024-05-09T12:00:00Z",
-    "session_count": 7,
-    "summary": "A desktop application for OCR processing of medical documents, built with Electron and Python backend",
-    "description": "The application has been refactored from a web-based solution to a desktop application using Electron. The core infrastructure has been completed, including process management, server configuration, and startup synchronization. The application now features a pure Electron frontend with HTML/CSS/JS instead of React, and maintains the Python backend for OCR processing capabilities.",
+    "last_updated": "2024-05-09T23:59:00Z",
+    "last_session": "2024-05-09T23:59:00Z",
+    "session_count": 8,
+    "summary": "Unified and modernized OCR Scanner Electron app. Merged legacy and new codebases, improved UI with drag-and-drop, copy/export/clear actions, and packaged for Launchpad/Dock integration.",
+    "description": "The project was migrated from split Electron and brurya/gil folders into a unified Electron desktop app. Node.js and Python dependencies were reinstalled and fixed. The UI was modernized with drag-and-drop upload, action buttons, and improved feedback. The app was packaged as a .app bundle, moved to /Applications, and is now available in Launchpad and the Dock. All changes were backed up and committed to git.",
     "version_history": [
       {
         "version": "1.0.0",
@@ -49,6 +49,21 @@
           "Improved server stability",
           "Enhanced cleanup procedures",
           "Updated port management"
+        ]
+      },
+      {
+        "version": "1.1.0",
+        "date": "2024-05-09T23:59:00Z",
+        "summary": "Unified project, UI overhaul, packaged for Launchpad/Dock",
+        "description": "Merged Electron and brurya/gil, fixed backend and frontend, added drag-and-drop, copy/export/clear, packaged as .app, moved to /Applications, and made available in Launchpad and Dock. All changes committed to git.",
+        "changes": [
+          "Merged legacy and new codebases",
+          "Fixed backend config and process management",
+          "Reinstalled and cleaned dependencies",
+          "Modernized UI with drag-and-drop, action buttons, and feedback",
+          "Packaged app as .app bundle",
+          "Moved app to /Applications for Launchpad/Dock integration",
+          "Backed up and committed all changes to git"
         ]
       }
     ],

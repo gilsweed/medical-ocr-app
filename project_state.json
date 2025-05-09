@@ -6,6 +6,8 @@
     "last_updated": "2024-03-19T14:00:00Z",
     "last_session": "2024-03-19T14:00:00Z",
     "session_count": 5,
+    "summary": "A desktop application for OCR processing of medical documents, built with Electron and Python backend",
+    "description": "The application has been refactored from a web-based solution to a desktop application using Electron. The core infrastructure has been completed, including process management, server configuration, and startup synchronization. The application now features a pure Electron frontend with HTML/CSS/JS instead of React, and maintains the Python backend for OCR processing capabilities.",
     "known_issues": [
       {
         "id": "process_cleanup",

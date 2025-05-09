@@ -8,6 +8,22 @@
     "session_count": 5,
     "summary": "A desktop application for OCR processing of medical documents, built with Electron and Python backend",
     "description": "The application has been refactored from a web-based solution to a desktop application using Electron. The core infrastructure has been completed, including process management, server configuration, and startup synchronization. The application now features a pure Electron frontend with HTML/CSS/JS instead of React, and maintains the Python backend for OCR processing capabilities.",
+    "version_history": [
+      {
+        "version": "1.0.0",
+        "date": "2024-03-19T14:00:00Z",
+        "summary": "Initial release with core infrastructure",
+        "description": "Completed core infrastructure including process management, server configuration, and startup synchronization. Implemented basic UI components and error handling. Resolved process cleanup issues and port management.",
+        "changes": [
+          "Implemented ProcessManager class",
+          "Created gunicorn.conf.py",
+          "Added proper signal handling",
+          "Implemented cleanup procedures",
+          "Created start.sh script",
+          "Added process synchronization"
+        ]
+      }
+    ],
     "known_issues": [
       {
         "id": "process_cleanup",

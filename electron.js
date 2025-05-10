@@ -1,9 +1,10 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
-const { spawn, execSync } = require('child_process');
-const isDev = process.env.NODE_ENV === 'development';
+const { spawn } = require('child_process');
 const waitOn = require('wait-on');
 const fs = require('fs');
+
+const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
 let mainWindow;
 let pythonProcess;
@@ -42,7 +43,6 @@ function getPythonPort() {
                 }
             }
         }
-
         tryReadPort();
     });
 }
@@ -50,7 +50,13 @@ function getPythonPort() {
 const PYTHON_PORT = getPythonPort();
 
 function getIconPath() {
-    return path.join(process.resourcesPath, 'app.asar.unpacked', 'icon.png');
+    if (isDev) {
+        // In development, use the icon from the project root
+        return path.join(__dirname, 'icon.png');
+    } else {
+        // In production, use the unpacked resources path
+        return path.join(process.resourcesPath, 'app.asar.unpacked', 'icon.png');
+    }
 }
 
 function createWindow() {
@@ -85,8 +91,6 @@ function cleanupPythonProcess() {
         try {
             // Try graceful shutdown first
             pythonProcess.kill('SIGTERM');
-            
-            // Give it a moment to clean up
             setTimeout(() => {
                 if (pythonProcess) {
                     // Force kill if still running
@@ -250,60 +254,4 @@ app.on('before-quit', () => {
 });
 
 // Handle process termination
-process.on('SIGTERM', () => {
-    cleanupPythonProcess();
-    app.quit();
-});
-
-process.on('SIGINT', () => {
-    cleanupPythonProcess();
-    app.quit();
-});
-
-// IPC handlers for communication between renderer and main process
-ipcMain.handle('select-file', async () => {
-    const result = await dialog.showOpenDialog(mainWindow, {
-        properties: ['openFile'],
-        filters: [
-            { name: 'Images and PDFs', extensions: ['jpg', 'jpeg', 'png', 'pdf'] }
-        ]
-    });
-    return result.filePaths[0];
-});
-
-// IPC handlers for OCR processing
-ipcMain.handle('process-image', async (event, filePath) => {
-    try {
-        console.log('Processing image:', filePath);
-        responseSent = false;
-
-        const port = await getPythonPort();
-
-        const response = await fetch(`http://localhost:${port}/api/process`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ filePath }),
-        });
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Failed to process file');
-        }
-
-        const result = await response.json();
-        responseSent = true;
-        return result;
-    } catch (error) {
-        console.error('Error processing image:', error);
-        if (!responseSent) {
-            return {
-                success: false,
-                error: error.message || 'Failed to process file'
-            };
-        }
-        console.error('Error occurred after response was sent:', error);
-        return null;
-    }
-}); 
+process

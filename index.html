@@ -1,10 +1,142 @@
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Minimal Electron Window</title>
-    </head>
-    <body>
-        <h1>THIS IS THE REAL INDEX.HTML - TEST 12345</h1>
-        <p>If you see this, the renderer is working and not blocking.</p>
-    </body>
-    </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Electron App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #181A20;
+      color: #222;
+    }
+    h1 {
+      color: #3a3a3a;
+    }
+    .container {
+      background: #fff;
+      border-radius: 8px;
+      padding: 32px;
+      max-width: 500px;
+      margin: 0 auto;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    .file-input {
+      margin-bottom: 20px;
+    }
+    #progress-container {
+      margin: 20px 0;
+      display: none;
+    }
+    #progress-bar {
+      width: 100%;
+      height: 18px;
+      background: #e0e0e0;
+      border-radius: 9px;
+      overflow: hidden;
+    }
+    #progress-bar-inner {
+      height: 100%;
+      width: 0;
+      background: #4caf50;
+      transition: width 0.3s;
+    }
+    #result, #error {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 6px;
+      display: none;
+    }
+    #result {
+      background: #e8f5e9;
+      color: #256029;
+    }
+    #error {
+      background: #ffebee;
+      color: #b71c1c;
+    }
+    button {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 5px;
+      background: #1976d2;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:disabled {
+      background: #90caf9;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Process a File</h1>
+    <div class="file-input">
+      <input type="file" id="fileInput" />
+    </div>
+    <button id="processBtn" disabled>Process</button>
+    <div id="progress-container">
+      <div id="progress-bar">
+        <div id="progress-bar-inner"></div>
+      </div>
+    </div>
+    <div id="result"></div>
+    <div id="error"></div>
+  </div>
+  <script>
+    const { ipcRenderer } = window.require ? window.require('electron') : window.electron;
+
+    const fileInput = document.getElementById('fileInput');
+    const processBtn = document.getElementById('processBtn');
+    const progressContainer = document.getElementById('progress-container');
+    const progressBarInner = document.getElementById('progress-bar-inner');
+    const resultDiv = document.getElementById('result');
+    const errorDiv = document.getElementById('error');
+
+    let selectedFilePath = null;
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        selectedFilePath = e.target.files[0].path;
+        processBtn.disabled = false;
+        resultDiv.style.display = 'none';
+        errorDiv.style.display = 'none';
+      } else {
+        processBtn.disabled = true;
+      }
+    });
+
+    processBtn.addEventListener('click', () => {
+      if (!selectedFilePath) return;
+      processBtn.disabled = true;
+      progressContainer.style.display = 'block';
+      progressBarInner.style.width = '0%';
+      resultDiv.style.display = 'none';
+      errorDiv.style.display = 'none';
+
+      ipcRenderer.send('process-file', selectedFilePath);
+    });
+
+    ipcRenderer.on('process-progress', (event, percent) => {
+      progressBarInner.style.width = percent + '%';
+    });
+
+    ipcRenderer.on('process-result', (event, data) => {
+      progressContainer.style.display = 'none';
+      resultDiv.textContent = data;
+      resultDiv.style.display = 'block';
+      processBtn.disabled = false;
+    });
+
+    ipcRenderer.on('process-error', (event, error) => {
+      progressContainer.style.display = 'none';
+      errorDiv.textContent = error;
+      errorDiv.style.display = 'block';
+      processBtn.disabled = false;
+    });
+  </script>
+</body>
+</html>

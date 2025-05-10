@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
-const { spawn, execSync } = require('child_process');
+const { spawn } = require('child_process');
 const isDev = process.env.NODE_ENV === 'development';
 const waitOn = require('wait-on');
 const fs = require('fs');
@@ -67,7 +67,7 @@ function createWindow() {
     }
 
     // Load the HTML file
-    mainWindow.loadFile(require('path').join(__dirname, 'index.html'));
+    mainWindow.loadFile('index.html');
 
     // Log any errors that occur during loading
     mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
@@ -103,25 +103,19 @@ async function startPythonBackend() {
             console.log('Starting Python backend...');
             responseSent = false;
 
-            // Determine correct backend path
-            let basePath = __dirname;
-            // Always use app.asar.unpacked if running from a packaged app
-            if (basePath.includes('app.asar')) {
-                basePath = basePath.replace('app.asar', 'app.asar.unpacked');
-            }
-            // For extra safety, if running from /Resources/app.asar, force the unpacked path
-            if (basePath.endsWith('Resources')) {
-                basePath = path.join(basePath, 'app.asar.unpacked');
-            }
-            const backendDir = path.join(basePath, 'backend');
-            // Use the PyInstaller-built executable
-            const execPath = path.join(backendDir, 'dist', process.platform === 'win32' ? 'supervisor.exe' : 'supervisor');
+            const pythonPath = path.join(__dirname, 'backend', 'venv', 'bin', 'python');
+            const scriptPath = path.join(__dirname, 'backend', 'supervisor.py');
+            const backendDir = path.join(__dirname, 'backend');
 
-            console.log('Supervisor executable path:', execPath);
+            console.log('Python path:', pythonPath);
+            console.log('Script path:', scriptPath);
             console.log('Backend directory:', backendDir);
 
-            // Start the supervisor executable
-            pythonProcess = spawn(execPath, [], {
+            // Clean up any existing Python processes
+            cleanupPythonProcess();
+
+            // Start the Python process with proper error handling
+            pythonProcess = spawn(pythonPath, [scriptPath], {
                 stdio: 'pipe',
                 cwd: backendDir,
                 env: {
@@ -135,7 +129,7 @@ async function startPythonBackend() {
 
             // Handle process errors
             pythonProcess.on('error', (error) => {
-                console.error('Failed to start supervisor executable:', error);
+                console.error('Failed to start Python process:', error);
                 if (!responseSent) {
                     responseSent = true;
                     reject(error);
@@ -170,7 +164,7 @@ async function startPythonBackend() {
                 });
 
             pythonProcess.stdout.on('data', (data) => {
-                console.log(`Supervisor stdout: ${data}`);
+                console.log(`Python stdout: ${data}`);
             });
 
             pythonProcess.stderr.on('data', (data) => {
@@ -178,32 +172,32 @@ async function startPythonBackend() {
                 if (logLine.includes('ERROR') || 
                     logLine.includes('CRITICAL') ||
                     logLine.includes('FATAL')) {
-                    console.error(`Supervisor stderr: ${data}`);
+                    console.error(`Python stderr: ${data}`);
                     if (!responseSent) {
                         responseSent = true;
-                        reject(new Error(`Supervisor backend error: ${data}`));
+                        reject(new Error(`Python backend error: ${data}`));
                     } else {
                         console.error('Error occurred after response was sent:', data);
                     }
                 } else {
-                    console.log(`Supervisor output: ${data}`);
+                    console.log(`Python output: ${data}`);
                 }
             });
 
             pythonProcess.on('close', (code) => {
-                console.log(`Supervisor process exited with code ${code}`);
+                console.log(`Python process exited with code ${code}`);
                 if (code !== 0 && !responseSent) {
                     responseSent = true;
-                    reject(new Error(`Supervisor backend exited with code ${code}`));
+                    reject(new Error(`Python backend exited with code ${code}`));
                 } else if (code !== 0) {
-                    console.error('Supervisor backend exited with non-zero code after response was sent:', code);
+                    console.error('Python backend exited with non-zero code after response was sent:', code);
                 }
                 pythonProcess = null;
             });
 
             return pythonProcess;
         } catch (error) {
-            console.error('Error starting supervisor backend:', error);
+            console.error('Error starting Python backend:', error);
             if (!responseSent) {
                 reject(error);
             } else {
@@ -214,15 +208,17 @@ async function startPythonBackend() {
 }
 
 // This method will be called when Electron has finished initialization
-app.whenReady().then(() => {
-    // Create window immediately
-    createWindow();
-
-    // Start Python backend in parallel
-    startPythonBackend().catch((error) => {
-        console.error('Failed to start Python backend:', error);
-        // Optionally, notify the renderer of backend failure via IPC
-    });
+app.whenReady().then(async () => {
+    try {
+        // Start Python backend
+        await startPythonBackend();
+        
+        // Create window
+        createWindow();
+    } catch (error) {
+        console.error('Failed to start application:', error);
+        app.quit();
+    }
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
@@ -260,7 +256,8 @@ ipcMain.handle('select-file', async () => {
     const result = await dialog.showOpenDialog(mainWindow, {
         properties: ['openFile'],
         filters: [
-            { name: 'Images and PDFs', extensions: ['jpg', 'jpeg', 'png', 'pdf'] }
+            { name: 'Images', extensions: ['jpg', 'jpeg', 'png'] },
+            { name: 'PDFs', extensions: ['pdf'] }
         ]
     });
     return result.filePaths[0];
@@ -272,9 +269,7 @@ ipcMain.handle('process-image', async (event, filePath) => {
         console.log('Processing image:', filePath);
         responseSent = false;
 
-        const port = await getPythonPort();
-
-        const response = await fetch(`http://localhost:${port}/api/process`, {
+        const response = await fetch(`http://localhost:${PYTHON_PORT}/api/process`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -13,56 +13,39 @@
     "dev": "concurrently \"cd backend && ./venv/bin/python supervisor.py\" \"wait-on http://localhost:8080 && electron .\"",
     "kill": "pkill -f 'python|node' || true",
     "restart": "npm run kill && npm run dev",
-    "package": "npm run clean && npm run setup && npm run make",
-    "dist": "electron-builder"
+    "package": "npm run clean && npm run setup && npm run make"
   },
   "build": {
-    "appId": "com.yourapp.id",
+    "appId": "com.ocr.scanner",
     "productName": "OCR Scanner",
     "directories": {
       "output": "out"
     },
     "files": [
-      "electron.js",
-      "package.json",
-      "index.html",
-      "backend/dist/supervisor",
-      "backend/dist/supervisor.exe",
-      "backend/**/assets/**",
-      "frontend/**",
-      "project_state.json"
-    ],
-    "asarUnpack": [
-      "backend/dist/supervisor",
-      "backend/dist/supervisor.exe"
+      "**/*",
+      "!backend/venv/**",
+      "!**/*.pyc",
+      "!**/__pycache__/**",
+      "!**/.pytest_cache/**"
     ],
     "mac": {
-      "target": [
-        "dmg",
-        "zip"
-      ],
+      "target": ["dmg", "zip"],
       "category": "public.app-category.utilities"
     },
     "win": {
-      "target": [
-        "nsis",
-        "portable"
-      ]
+      "target": ["nsis", "portable"]
     },
     "linux": {
-      "target": [
-        "AppImage",
-        "deb"
-      ]
+      "target": ["AppImage", "deb"]
     }
   },
   "dependencies": {
     "wait-on": "^7.2.0"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
     "electron": "^28.0.0",
-    "electron-builder": "^24.13.3"
+    "electron-builder": "^24.9.1",
+    "concurrently": "^8.2.2"
   },
   "browserslist": {
     "production": [
@@ -81,7 +64,7 @@
     "url": "git+https://github.com/gilsweed/medical-ocr-app.git"
   },
   "keywords": [],
-  "author": "Your Name <your@email.com>",
+  "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/gilsweed/medical-ocr-app/issues"

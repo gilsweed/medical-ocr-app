@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OCR Scanner</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #b0b0b0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #b0b0b0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 32px;
+            text-align: center;
+            font-size: 2.2em;
+            letter-spacing: 1px;
+        }
+        .button {
+            background-color: #007AFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .progress {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: #007AFF;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            min-height: 100px;
+            white-space: pre-wrap;
+            display: none;
+        }
+        .error {
+            color: #dc3545;
+            margin-top: 10px;
+            display: none;
+        }
+        #dropZone {
+            border: 2px dashed #007AFF;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            color: #888;
+            margin-bottom: 20px;
+            cursor: pointer;
+            background: #f9f9f9;
+            transition: background 0.2s;
+        }
+        #actions {
+            display: none;
+            margin-top: 10px;
+            justify-content: center;
+            gap: 10px;
+        }
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #aaa;
+            font-size: 0.95em;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            #dropZone {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OCR Scanner</h1>
+        <div id="dropZone">
+            <span id="dropText">Drag & Drop image or PDF here<br><span style='font-size:0.9em;color:#bbb;'>(JPG, JPEG, PNG, PDF)</span></span>
+        </div>
+        <button class="button" id="selectFile" style="width:100%;max-width:200px;display:block;margin:0 auto 20px auto;">Select File</button>
+        <div class="progress" id="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div id="result"></div>
+        <div class="error" id="error"></div>
+        <div id="actions">
+            <button class="button" id="copyText">Copy Text</button>
+            <button class="button" id="exportText">Export</button>
+            <button class="button" id="clearResult">Clear</button>
+        </div>
+        <footer>OCR Scanner &copy; 2024 | Powered by Electron & Python</footer>
+    </div>
+
+    <script>
+        const { ipcRenderer, clipboard, shell } = require('electron');
+
+        function showResult(text) {
+            document.getElementById('result').textContent = text;
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('actions').style.display = 'flex';
+        }
+
+        function clearResult() {
+            document.getElementById('result').textContent = '';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('actions').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+        }
+
+        document.getElementById('selectFile').addEventListener('click', async () => {
+            try {
+                const filePath = await ipcRenderer.invoke('select-file');
+                if (filePath) {
+                    processFile(filePath);
+                }
+            } catch (error) {
+                document.getElementById('error').textContent = error.message;
+                document.getElementById('error').style.display = 'block';
+            }
+        });
+
+        // Drag and drop support
+        const dropZone = document.getElementById('dropZone');
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.background = '#e3f0ff';
+        });
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.style.background = '#f9f9f9';
+        });
+        dropZone.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            dropZone.style.background = '#f9f9f9';
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                processFile(files[0].path);
+            }
+        });
+        dropZone.addEventListener('click', () => {
+            document.getElementById('selectFile').click();
+        });
+
+        async function processFile(filePath) {
+            document.getElementById('progress').style.display = 'block';
+            document.getElementById('progressBar').style.width = '50%';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('actions').style.display = 'none';
+            try {
+                const result = await ipcRenderer.invoke('process-image', filePath);
+                document.getElementById('progressBar').style.width = '100%';
+                if (result.success) {
+                    showResult(result.text);
+                } else {
+                    document.getElementById('error').textContent = result.error;
+                    document.getElementById('error').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('error').textContent = error.message;
+                document.getElementById('error').style.display = 'block';
+            } finally {
+                setTimeout(() => {
+                    document.getElementById('progress').style.display = 'none';
+                    document.getElementById('progressBar').style.width = '0%';
+                }, 500);
+            }
+        }
+
+        document.getElementById('copyText').addEventListener('click', () => {
+            const text = document.getElementById('result').textContent;
+            clipboard.writeText(text);
+        });
+        document.getElementById('exportText').addEventListener('click', () => {
+            const text = document.getElementById('result').textContent;
+            ipcRenderer.invoke('export-text', text);
+        });
+        document.getElementById('clearResult').addEventListener('click', clearResult);
+    </script>
+</body>
+</html>

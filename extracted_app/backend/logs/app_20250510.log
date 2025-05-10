@@ -1,0 +1,115 @@
+2025-05-10 00:06:50,191 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-10 00:06:50,192 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 00:06:50,930 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-10 00:06:50,931 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 00:07:06,815 - main - INFO - Received signal 15
+2025-05-10 00:13:29,679 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-10 00:13:29,679 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 00:13:30,278 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-10 00:13:30,278 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 00:14:25,616 - main - INFO - Received signal 15
+2025-05-10 00:14:51,820 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-10 00:14:51,820 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 00:14:52,415 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-10 00:14:52,415 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 00:15:38,153 - main - INFO - Received signal 15
+2025-05-10 00:15:49,536 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-10 00:15:49,536 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 00:15:50,137 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-10 00:15:50,137 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 00:16:14,901 - main - INFO - Received signal 15
+2025-05-10 00:17:17,382 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-10 00:17:17,382 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 00:17:18,078 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-10 00:17:18,078 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 00:17:47,452 - main - INFO - Received signal 15
+2025-05-10 00:18:58,795 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-10 00:18:58,795 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 00:18:59,403 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-10 00:18:59,403 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 06:30:05,349 - main - INFO - Received signal 15
+2025-05-10 06:32:14,789 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-10 06:32:14,789 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 06:32:15,405 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-10 06:32:15,405 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 06:32:39,429 - main - INFO - Received signal 15
+2025-05-10 06:34:31,794 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-10 06:34:31,795 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 06:34:32,387 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-10 06:34:32,387 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 06:35:11,780 - main - INFO - Received signal 15
+2025-05-10 06:43:43,604 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-10 06:43:43,604 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 06:43:44,184 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-10 06:43:44,184 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 06:44:27,280 - main - INFO - Received signal 15
+2025-05-10 06:49:12,971 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-10 06:49:12,971 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 06:49:13,569 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-10 06:49:13,569 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-10 06:49:28,144 - main - INFO - Received signal 15
+2025-05-10 12:46:01,887 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.68.104:8080
+2025-05-10 12:46:01,888 - werkzeug - INFO - [33mPress CTRL+C to quit[0m

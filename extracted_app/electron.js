@@ -67,7 +67,7 @@ function createWindow() {
     }
 
     // Load the HTML file
-    mainWindow.loadFile(require('path').join(__dirname, 'index.html'));
+    mainWindow.loadFile('index.html');
 
     // Log any errors that occur during loading
     mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {

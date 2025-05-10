@@ -49,12 +49,16 @@ function getPythonPort() {
 
 const PYTHON_PORT = getPythonPort();
 
+function getIconPath() {
+    return path.join(process.resourcesPath, 'app.asar.unpacked', 'icon.png');
+}
+
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         width: 1200,
         height: 800,
-        icon: path.join(__dirname, 'backend', 'assets', 'icon.png'),
+        icon: getIconPath(),
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
@@ -63,11 +67,11 @@ function createWindow() {
 
     // Set dock icon for macOS
     if (process.platform === 'darwin') {
-        app.dock.setIcon(path.join(__dirname, 'backend', 'assets', 'icon.png'));
+        app.dock.setIcon(getIconPath());
     }
 
     // Load the HTML file
-    mainWindow.loadFile(require('path').join(__dirname, 'index.html'));
+    mainWindow.loadFile('index.html');
 
     // Log any errors that occur during loading
     mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
@@ -234,6 +238,7 @@ app.whenReady().then(() => {
 // Handle app quit
 app.on('window-all-closed', () => {
     cleanupPythonProcess();
+    // On macOS, do NOT quit the app when all windows are closed
     if (process.platform !== 'darwin') {
         app.quit();
     }

@@ -23,12 +23,29 @@
       "output": "out"
     },
     "files": [
-       "electron.js",
-  "index.html",
-  "icon.png"
+      "electron.js",
+      "package.json",
+      "index.html",
+      "backend/dist/supervisor",
+      "backend/dist/supervisor.exe",
+"files": [
+      "electron.js",
+      "package.json",
+      "index.html",
+      "backend/dist/supervisor",
+      "backend/dist/supervisor.exe",
+      "backend/**/assets/**",
+      "frontend/**",
+      "project_state.json"
     ],
     "asarUnpack": [
-       "**/icon.png"
+      "backend/dist/supervisor",
+      "frontend/**",
+      "project_state.json"
+    ],
+    "asarUnpack": [
+      "backend/dist/supervisor",
+      "backend/dist/supervisor.exe"
     ],
     "mac": {
       "target": [

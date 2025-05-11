@@ -88,47 +88,5 @@
   </div>
   <script>
     const { ipcRenderer } = window.require ? window.require('electron') : window.electron;
+
     const fileInput = document.getElementById('fileInput');
-    const processBtn = document.getElementById('processBtn');
-    const progressContainer = document.getElementById('progress-container');
-    const progressBarInner = document.getElementById('progress-bar-inner');
-    const resultDiv = document.getElementById('result');
-    const errorDiv = document.getElementById('error');
-    let selectedFilePath = null;
-    fileInput.addEventListener('change', (e) => {
-      if (e.target.files.length > 0) {
-        selectedFilePath = e.target.files[0].path;
-        processBtn.disabled = false;
-        resultDiv.style.display = 'none';
-        errorDiv.style.display = 'none';
-      } else {
-        processBtn.disabled = true;
-      }
-    });
-    processBtn.addEventListener('click', () => {
-      if (!selectedFilePath) return;
-      processBtn.disabled = true;
-      progressContainer.style.display = 'block';
-      progressBarInner.style.width = '0%';
-      resultDiv.style.display = 'none';
-      errorDiv.style.display = 'none';
-      ipcRenderer.send('process-file', selectedFilePath);
-    });
-    ipcRenderer.on('process-progress', (event, percent) => {
-      progressBarInner.style.width = percent + '%';
-    });
-    ipcRenderer.on('process-result', (event, data) => {
-      progressContainer.style.display = 'none';
-      resultDiv.textContent = data;
-      resultDiv.style.display = 'block';
-      processBtn.disabled = false;
-    });
-    ipcRenderer.on('process-error', (event, error) => {
-      progressContainer.style.display = 'none';
-      errorDiv.textContent = error;
-      errorDiv.style.display = 'block';
-      processBtn.disabled = false;
-    });
-  </script>
-</body>
-</html>

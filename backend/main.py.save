@@ -1,0 +1,40 @@
+
+# Add error handler for unhandled exceptions
+@app.errorhandler(Exception)
+def handle_error(error):
+    """Global error handler."""
+    try:
+        logger.error(f"Unhandled error: {str(error)}")
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        return jsonify({
+            'success': False,
+            'error': str(error)
+        }), 500
+    except Exception as e:
+        logger.error(f"Error in error handler: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': 'Internal server error'
+        }), 500
+
+# Add before_request handler to track if response was sent
+@app.before_request
+def before_request():
+    """Track if response was sent."""
+    g.response_sent = False
+
+# Add after_request handler to mark response as sent
+@app.after_request
+def after_request(response):
+    """Mark response as sent."""
+    g.response_sent = True
+    return response
+
+if __name__ == '__main__':
+    logger.info(f"Starting server on {HOST}:{PORT}")
+    logger.debug("Server configuration:")
+    logger.debug(f"  Host: {HOST}")
+    logger.debug(f"  Port: {PORT}")
+    logger.debug(f"  Debug mode: {app.debug}")
+    logger.info("Attempting to start server...")
+    app.run(host=HOST, port=PORT, debug=False, use_reloader=False) 

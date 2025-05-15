@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.3] - 2025-05-15
+### Permanent 'Status: Ready' Fix
+- Added unified startup script (`start_all.sh`) to ensure backend is always running before Electron app starts
+- Status indicator now remains 'Ready' as long as backend is running
+- Reconnect button and robust polling logic confirmed
+- Documentation updated to reflect new workflow and best practices
+
+## [1.3.2] - 2025-05-15
+### Added
+- Unified startup script (`start_all.sh`) for robust, one-command launch of backend and frontend
+- Documentation updated to reflect new workflow and best practices
+
+## [1.3.1] - 2025-05-15
+### Stable version before robust polling and reconnect button
+- Backend and frontend reliably communicate
+- Status indicator shows 'Ready' when backend is running
+- UI and documentation professionalized
+- All previous features and bugfixes included
+
+## [1.3.0] - 2025-05-13
+### Added
+- Electron app now reliably shows 'Status: Ready' when the backend is running and reachable (confirmed working in current version)
+- Documentation updated and professionalized (README, TROUBLESHOOTING, CHANGELOG)
+- Clear install, run, and troubleshooting instructions for both backend and frontend
+
 ## [1.2.0] - 2024-05-10
 ### Added
 - Changed app and window background to grey for a modern look
@@ -46,4 +71,17 @@ All notable changes to this project will be documented in this file.
 - Added proper signal handling
 - Implemented cleanup procedures
 - Created start.sh script
-- Added process synchronization 
+- Added process synchronization
+
+---
+
+## Documentation Links
+- [Troubleshooting Guide](TROUBLESHOOTING.md)
+- [Project State & Architecture](project_state.json)
+- [Development Plan](docs/DEVELOPMENT_PLAN.md)
+- [API Documentation](docs/api.md)
+- [Development Guide](docs/development.md)
+- [Project History](docs/project_history.md)
+
+For troubleshooting and upgrade instructions, see [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
+For architecture and project state, see [project_state.json](project_state.json). 

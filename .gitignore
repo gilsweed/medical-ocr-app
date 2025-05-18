@@ -63,3 +63,13 @@ backend/port.txt
 backend/server*.pid
 backend/server*.port
 archive/
+
+# Ignore build and output folders for Electron and packaged apps
+out/
+dist/
+build/
+*.dmg
+*.AppImage
+*.exe
+*.deb
+*.zip

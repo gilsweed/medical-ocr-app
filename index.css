@@ -1,124 +1,55 @@
-html, body {
-  height: 100%;
+body {
+  font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background: #222222 !important;
-  color: #fff;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
-
-body {
-  min-height: 100vh;
-  min-width: 100vw;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.container {
-  background: #222222; /* Match the window background */
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-  padding: 40px 32px 32px 32px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 350px;
-  max-width: 90vw;
+  background: #f7f7f7;
 }
 
 h1 {
-  color: #fff;
-  font-weight: 700;
-  margin-bottom: 24px;
-  font-size: 2rem;
-  letter-spacing: 0.5px;
+  text-align: center;
+  margin-top: 32px;
+  color: #333;
 }
 
-#status {
-  margin-bottom: 16px;
-  color: #90caf9;
-  font-weight: 500;
-}
-
-.file-input {
-  margin-bottom: 20px;
+form#upload-form {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 24px;
   gap: 12px;
 }
 
-button {
-  background: #007aff;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: 500;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-  transition: background 0.2s;
-  cursor: pointer;
-  outline: none;
+#file-input {
+  padding: 8px;
+  font-size: 1em;
 }
 
-button:hover {
-  background: #005ecb;
-}
-
-#startOcrBtn {
-  margin-top: 20px;
-  width: 100%;
-}
-
-#error {
-  margin-top: 16px;
-  padding: 12px;
-  border-radius: 6px;
-  background: #ffebee;
-  color: #b71c1c;
-  display: none;
-  border: 1px solid #ffcdd2;
-  width: 100%;
-  text-align: center;
-}
-
-ul#fileList {
-  margin: 10px 0 0 0;
-  padding: 0;
-  list-style: none;
-  max-height: 180px;
-  overflow-y: auto;
-  background: #232323;
-  border-radius: 6px;
-  border: 1px solid #333;
-  width: 100%;
-}
-
-ul#fileList li {
-  padding: 8px 16px;
-  border-bottom: 1px solid #333;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 15px;
-}
-
-ul#fileList li:last-child {
-  border-bottom: none;
-}
-
-.remove-btn {
-  background: #e74c3c;
+button[type="submit"] {
+  padding: 10px 24px;
+  font-size: 1em;
+  background: #4caf50;
   color: #fff;
   border: none;
   border-radius: 4px;
-  padding: 4px 12px;
   cursor: pointer;
-  font-size: 13px;
   transition: background 0.2s;
 }
 
-.remove-btn:hover {
-  background: #c0392b;
+button[type="submit"]:hover {
+  background: #388e3c;
 }
 
+#ocr-result {
+  direction: rtl;
+  text-align: right;
+  font-size: 1.1em;
+  background: #fff;
+  padding: 24px;
+  margin: 32px auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  max-width: 800px;
+  min-height: 200px;
+  color: #222;
+  white-space: pre-wrap;
+}

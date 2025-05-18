@@ -2,26 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>OCR Scanner Electron App</title>
-  <link rel="stylesheet" href="index.css" />
+  <title>OCR Scanner App</title>
+  <link rel="stylesheet" href="index.css">
 </head>
 <body>
-  <div class="container" id="container">
-    <h1>Select Files for OCR</h1>
-    <div id="status">
-      Status: <span id="statusText">Checking...</span>
-      <button id="reconnectBtn" style="display:none; margin-left: 16px;">Reconnect</button>
-    </div>
-    <div class="file-input">
-      <button id="selectFilesBtn" type="button">Select Files</button>
-      <button id="selectFolderBtn" type="button">Select Folder</button>
-      <input type="file" id="fileInputFiles" multiple style="display:none;" />
-      <input type="file" id="fileInputFolder" webkitdirectory directory style="display:none;" />
-    </div>
-    <ul id="fileList"></ul>
-    <button id="startOcrBtn">Start OCR</button>
-    <div id="error"></div>
-  </div>
+  <h1>OCR Scanner App</h1>
+  <form id="upload-form">
+    <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png" />
+    <button type="submit">Upload for OCR</button>
+  </form>
+  <div id="ocr-result"></div>
   <script src="renderer.js"></script>
 </body>
 </html>

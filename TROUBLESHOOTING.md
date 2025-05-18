@@ -11,6 +11,8 @@ This guide documents common issues, symptoms, and solutions for the OCR Scanner 
 - [ ] Are you using the correct Node.js and Python versions?
 - [ ] Have you installed all dependencies (`npm install`, `pip install -r requirements.txt`)?
 - [ ] Are you editing the correct files (see [Project Structure](README.md#project-structure))?
+- [ ] Is Tesseract OCR installed and available in your PATH?
+- [ ] Are you using the correct OCR language settings (Hebrew/English)?
 
 ---
 
@@ -70,11 +72,28 @@ This guide documents common issues, symptoms, and solutions for the OCR Scanner 
   - Check backend terminal for errors.
   - Ensure port 8082 is free or change the port in both backend and Electron.
   - Reinstall Python dependencies.
+  - Ensure Tesseract OCR is installed and working.
 
 ### 5. UI Not Centered or Not Modern
 - **Root Cause:** Outdated or missing CSS.
 - **Solution:**
   - Update `index.css` with the latest modern, centered styles (see [README.md](README.md#installation--usage)).
+
+### 6. OCR Output is Poor or Empty
+- **Root Cause:** Low-quality scan, wrong language, or OCR engine issue.
+- **Solution:**
+  - Ensure the document is high-quality and clearly scanned.
+  - Check that the correct OCR language (Hebrew/English) is selected.
+  - If using pytesseract, ensure the correct language data is installed.
+  - If the app shows a warning about OCR quality, use the 'Open File' button to manually review the file.
+  - Consider trying a different OCR engine if results are consistently poor.
+
+### 7. 'Open File' Button Does Not Work
+- **Root Cause:** File path is invalid or Electron shell integration is broken.
+- **Solution:**
+  - Ensure the file exists at the given path.
+  - Check for errors in the Electron main/renderer process.
+  - Update Electron to the latest version if needed.
 
 ---
 
@@ -84,6 +103,8 @@ This guide documents common issues, symptoms, and solutions for the OCR Scanner 
 - Ensure you are editing the correct files and that your changes are being used.
 - Add IPC and backend status check logic to the Electron main process if the frontend needs to know backend status.
 - Use debug lines to confirm which files are being executed.
+- Use the modular OCR backend to allow easy switching of OCR engines in the future.
+- Use the 'Open File' button for manual review if OCR output is suspicious.
 
 ---
 

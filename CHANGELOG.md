@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2025-05-16
+### Added
+- Fully automated PDF/TIFF async OCR workflow with Google Cloud Vision API
+- Upload, OCR, download, parse, and deletion steps are all automated
+- Error notifications for each step (upload, OCR, download, parse, delete)
+- Extracted text is only saved locally; all cloud files are deleted after use
+- Documentation updated to reflect new workflow and privacy guarantees
+
+## [1.4.0] - 2025-05-16
+### Added
+- Modularized OCR backend to allow easy swapping of OCR engines (pytesseract, ABBYY, etc.)
+- Implemented OCR quality check: If output is below standard, show warning and allow manual file review
+- Added 'Open File' button in UI for manual inspection of files with OCR warnings
+- Improved batch processing and error handling
+- Updated documentation to reflect new features and workflow
+
+### Planned
+- Integrate advanced OCR engines as they become available
+- Enhance UI for larger file sets and better accessibility
+- Add export options (Word, Excel, etc.)
+- Implement user settings and preferences
+- Expand documentation and add more troubleshooting tips
+
 ## [1.3.3] - 2025-05-15
 ### Permanent 'Status: Ready' Fix
 - Added unified startup script (`start_all.sh`) to ensure backend is always running before Electron app starts

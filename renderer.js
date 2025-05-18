@@ -1,125 +1,61 @@
 const { ipcRenderer } = require('electron');
 
-let failCount = 0;
-const MAX_FAILS = 3;
-const statusText = document.getElementById('statusText');
-const reconnectBtn = document.getElementById('reconnectBtn');
+document.addEventListener('DOMContentLoaded', () => {
+  const fileInput = document.getElementById('file-input');
+  const uploadForm = document.getElementById('upload-form');
+  const ocrResultDiv = document.getElementById('ocr-result');
 
-async function updateStatus(manual = false) {
-  try {
-    const result = await ipcRenderer.invoke('check-backend-status');
-    if (result.status === 'Ready') {
-      failCount = 0;
-      statusText.textContent = result.status;
-      statusText.style.color = result.color;
-      reconnectBtn.style.display = 'none';
-    } else {
-      failCount++;
-      if (failCount >= MAX_FAILS || manual) {
-        statusText.textContent = 'Offline';
-        statusText.style.color = '#b71c1c';
-        reconnectBtn.style.display = '';
+  uploadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (!fileInput.files.length) {
+      ocrResultDiv.textContent = 'Please select a file.';
+      return;
+    }
+
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+
+    ocrResultDiv.textContent = 'Uploading and processing...';
+
+    try {
+      const response = await fetch('http://localhost:8082/api/ocr/pdf', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+
+      if (data.warning && data.warning.length > 0) {
+        ocrResultDiv.textContent = 'Warning: ' + data.warning;
+      } else if (data.success) {
+        ocrResultDiv.textContent = 'File uploaded. Processing...';
+      } else {
+        ocrResultDiv.textContent = 'Error: ' + (data.error || 'Unknown error');
       }
+
+      // Fetch the OCR result
+      if (data.job_id) {
+        let statusData;
+        let tries = 0;
+        do {
+          const statusResp = await fetch(`http://localhost:8082/api/ocr/pdf/status/${data.job_id}`);
+          statusData = await statusResp.json();
+          if (statusData.success && statusData.status === 'done') {
+            break;
+          }
+          await new Promise(res => setTimeout(res, 1000));
+          tries++;
+        } while (tries < 10 && (!statusData || statusData.status !== 'done'));
+
+        if (statusData && statusData.success && statusData.status === 'done') {
+          ocrResultDiv.textContent = statusData.text;
+        } else {
+          ocrResultDiv.textContent = 'OCR job status: ' + (statusData.status || 'Unknown');
+        }
+      }
+    } catch (err) {
+      ocrResultDiv.textContent = 'Error: ' + err.message;
     }
-  } catch (e) {
-    failCount++;
-    if (failCount >= MAX_FAILS || manual) {
-      statusText.textContent = 'Offline';
-      statusText.style.color = '#b71c1c';
-      reconnectBtn.style.display = '';
-    }
-  }
-}
-
-reconnectBtn.onclick = () => {
-  updateStatus(true);
-};
-
-updateStatus();
-setInterval(updateStatus, 5000); // Check every 5 seconds
-
-// --- File/Folder Selection Logic ---
-
-const selectFilesBtn = document.getElementById('selectFilesBtn');
-const selectFolderBtn = document.getElementById('selectFolderBtn');
-const fileInputFiles = document.getElementById('fileInputFiles');
-const fileInputFolder = document.getElementById('fileInputFolder');
-const fileList = document.getElementById('fileList');
-const errorDiv = document.getElementById('error');
-let selectedFiles = [];
-const SUPPORTED_EXT = ['.pdf', '.jpg', '.jpeg', '.tiff', '.tif', '.png', '.bmp', '.gif'];
-
-function showError(msg) {
-  errorDiv.textContent = msg;
-  errorDiv.style.display = 'block';
-}
-function clearError() {
-  errorDiv.textContent = '';
-  errorDiv.style.display = 'none';
-}
-function updateFileList() {
-  fileList.innerHTML = '';
-  selectedFiles.forEach((file, idx) => {
-    const li = document.createElement('li');
-    li.textContent = file;
-    const btn = document.createElement('button');
-    btn.textContent = 'Remove';
-    btn.className = 'remove-btn';
-    btn.onclick = () => {
-      selectedFiles.splice(idx, 1);
-      updateFileList();
-    };
-    li.appendChild(btn);
-    fileList.appendChild(li);
   });
-}
-function isSupported(filePath) {
-  return SUPPORTED_EXT.includes(
-    filePath.slice(filePath.lastIndexOf('.')).toLowerCase()
-  );
-}
-function addFiles(files) {
-  let errors = [];
-  for (const file of files) {
-    if (!isSupported(file)) {
-      errors.push(
-        `File ${file} is not a supported type. Supported types: ${SUPPORTED_EXT.join(', ').toUpperCase()}`
-      );
-      continue;
-    }
-    if (!selectedFiles.includes(file)) {
-      selectedFiles.push(file);
-    }
-  }
-  updateFileList();
-  if (errors.length) showError(errors.join('\n'));
-  else clearError();
-}
-
-// File selection
-selectFilesBtn.onclick = () => {
-  fileInputFiles.value = '';
-  fileInputFiles.click();
-};
-fileInputFiles.addEventListener('change', (e) => {
-  clearError();
-  let files = [];
-  for (const file of e.target.files) {
-    files.push(file.path);
-  }
-  addFiles(files);
-});
-
-// Folder selection
-selectFolderBtn.onclick = () => {
-  fileInputFolder.value = '';
-  fileInputFolder.click();
-};
-fileInputFolder.addEventListener('change', (e) => {
-  clearError();
-  let files = [];
-  for (const file of e.target.files) {
-    files.push(file.path);
-  }
-  addFiles(files);
 });

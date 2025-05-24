@@ -1,21 +1,19 @@
 #!/bin/bash
 
-# Set environment variables for Google Cloud credentials and bucket name
-export GOOGLE_APPLICATION_CREDENTIALS="/Users/gilsweed/Desktop/Brurya/gil/ocr-service-account.json"
-export GCS_BUCKET_NAME="hebrew-ocr-app-bucket-gilsweed-20240516"
+# Kill any process using port 8082
+PID=$(lsof -ti :8082)
+if [ ! -z "$PID" ]; then
+  echo "Killing process on port 8082 (PID: $PID)"
+  kill $PID
+fi
 
-# Start the backend (main.py) in the background
-echo "Starting backend..."
-python3 backend/main.py &
-BACKEND_PID=$!
+# Start backend with ABBYY environment variables in the background
+export DYLD_FRAMEWORK_PATH=/Users/gilsweed/Desktop/Brurya/ABBYY_SDK
+export DYLD_LIBRARY_PATH=/Users/gilsweed/Desktop/Brurya/ABBYY_SDK/FREngine.framework/Versions/A/Libraries
+/Library/Frameworks/Python.framework/Versions/3.13/bin/python3 main.py &
 
-# Wait for the backend to be ready
-echo "Waiting for backend to be ready..."
-sleep 3
+# Wait a moment to ensure backend starts
+sleep 2
 
-# Start the Electron app
-echo "Starting Electron app..."
+# Start Electron frontend
 npm start
-
-# When Electron app closes, stop the backend
-kill $BACKEND_PID

@@ -1,17 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>OCR Scanner App</title>
-  <link rel="stylesheet" href="index.css">
+    <meta charset="UTF-8">
+    <title>OCR Scanner Electron App</title>
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
-  <h1>OCR Scanner App</h1>
-  <form id="upload-form">
-    <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png" />
-    <button type="submit">Upload for OCR</button>
-  </form>
-  <div id="ocr-result"></div>
-  <script src="renderer.js"></script>
+    <div class="container">
+        <h1>OCR Scanner</h1>
+        <div class="card">
+            <label class="file-label">
+                <input type="file" id="fileInput" />
+                <span>Select File</span>
+            </label>
+            <div class="engine-row">
+                <label for="engineSelect">OCR Engine:</label>
+                <select id="engineSelect">
+                    <option value="abbyy" selected>ABBYY</option>
+                    <option value="google">Google Vision</option>
+                </select>
+            </div>
+            <button id="processButton">Process</button>
+        </div>
+        <pre id="resultArea" class="result-area"></pre>
+    </div>
+    <script src="renderer.js"></script>
 </body>
 </html>

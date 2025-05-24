@@ -195,3 +195,66 @@ body {
   background: #cccccc !important;
   color: #222;
 } 
+
+---
+
+## ABBYY FineReader Engine Licensing & SDK Integration
+
+This section documents troubleshooting steps and best practices for integrating ABBYY FineReader Engine 12 for Mac ARM64, with a focus on licensing and SDK activation issues.
+
+### Common Licensing Issues
+- **Error:** `ABBYY FineReader Engine is not licensed.`
+  - The SDK cannot find or validate the license file. This is usually due to an incorrect license file, wrong file location, or a license not valid for your platform (Mac ARM64).
+- **Error:** `Serial number is not valid` or `This serial number is already activated`
+  - The serial number is not valid for this SDK/platform, or has already been activated on another machine.
+
+### Troubleshooting Steps
+1. **Check License File Location**
+   - License files must be in:
+     `/Users/<your-username>/Library/Application Support/ABBYY/SDK/12/Licenses/`
+   - Typical files: `SWATxxxxxxxxxxxxxxxxxxxx.ABBYY.LocalLicense`, `ABBYY.License`, `.profile`, `.log`
+2. **Set Permissions**
+   - Ensure the license directory and files are readable:
+     ```sh
+     chmod -R 777 "/Users/<your-username>/Library/Application Support/ABBYY/SDK/12"
+     ```
+3. **Set Environment Variables**
+   - Some builds require:
+     ```sh
+     export ABBYY_LICENSE_PATH="/Users/<your-username>/Library/Application Support/ABBYY/SDK/12/Licenses"
+     export DYLD_FRAMEWORK_PATH="/path/to/FREngine.framework/parent"
+     ```
+   - You can also run the sample as:
+     ```sh
+     ABBYY_LICENSE_PATH="..." DYLD_FRAMEWORK_PATH="..." ./CommandLineInterface ...
+     ```
+4. **Framework Location**
+   - Ensure `FREngine.framework` is in `/Library/Frameworks/` or symlinked there.
+5. **Check License File Name**
+   - Try renaming your license file to `ABBYY.License` if not recognized.
+6. **Review Log Files**
+   - Check `ProductProtection_*.log` in the license directory for clues.
+7. **Try Running as Root**
+   - For testing only:
+     ```sh
+     sudo ABBYY_LICENSE_PATH="..." DYLD_FRAMEWORK_PATH="..." ./CommandLineInterface ...
+     ```
+8. **Reboot**
+   - Sometimes required after activation.
+9. **Check Platform Compatibility**
+   - Confirm with ABBYY that your license is for **FineReader Engine 12**, **Mac**, and **ARM64** (Apple Silicon/M2).
+10. **Contact ABBYY Support**
+    - If all else fails, provide your serial, platform, and error messages to ABBYY support. Ask for a license reset or a new license file for your platform.
+
+### Best Practices
+- Document all troubleshooting steps and ABBYY support correspondence in your project docs.
+- Keep a copy of all license files and logs for support.
+- Update this section with any new issues or solutions as they arise.
+
+### See Also
+- [README.md](README.md): Project overview and links to all documentation
+- [CHANGELOG.md](CHANGELOG.md): Version history
+- [docs/security.md](docs/security.md): Security and compliance
+- [docs/development.md](docs/development.md): Development workflow
+
+--- 

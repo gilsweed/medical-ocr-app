@@ -2,6 +2,17 @@
 
 # dependencies
 node_modules/
+out/
+*.log
+*.dmg
+*.exe
+*.AppImage
+*.zip
+*.blockmap
+*.deb
+mac-arm64/
+win-arm64-unpacked/
+linux-arm64-unpacked/
 /.pnp
 .pnp.js
 
@@ -64,12 +75,20 @@ backend/server*.pid
 backend/server*.port
 archive/
 
-# Ignore build and output folders for Electron and packaged apps
+# Electron build artifacts and output folders
 out/
 dist/
 build/
+*-unpacked/
 *.dmg
 *.AppImage
 *.exe
-*.deb
 *.zip
+*.deb
+*.pkg
+*.msi
+*.log
+*.DS_Store
+node_modules/
+backend/venv/
+.env

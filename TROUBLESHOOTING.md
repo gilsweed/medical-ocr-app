@@ -16,6 +16,18 @@ This guide documents common issues, symptoms, and solutions for the OCR Scanner 
 
 ---
 
+## How to Get Help
+- Review this guide and the [README.md](README.md) for common issues and solutions.
+- For architecture and version history, see [project_state.json](project_state.json).
+- For the full roadmap, see [docs/DEVELOPMENT_PLAN.md](docs/DEVELOPMENT_PLAN.md).
+- For API usage, see [docs/api.md](docs/api.md).
+- For security and compliance, see [docs/security.md](docs/security.md).
+- For development workflow, see [docs/development.md](docs/development.md).
+- For project history, see [docs/project_history.md](docs/project_history.md).
+- If you need further help, open an issue on GitHub or contact the maintainer.
+
+---
+
 ## Common Issues & Solutions
 
 ### 1. Electron App Shows "Status: Offline"

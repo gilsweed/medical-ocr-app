@@ -48,7 +48,8 @@
 - **Installation Steps:**
   1. Download the correct .dmg for your architecture (arm64 for M2).
   2. Mount the .dmg and copy:
-     - `FREngine.framework` (required)
+     - `FRE
+     ngine.framework` (required)
      - `Samples` (optional, recommended)
      - `Help` (optional)
      - `activateFREngine.command` (required)
@@ -58,7 +59,7 @@
 ## 4. Release Notes Highlights (Release 5, Build 12.5.12.26025)
 - **New 'Accurate' recognition mode** for best quality on poor scans/medical docs
 - **Improved table and PDF processing** (mixed content, digital signatures, portfolios)
-- **Machine learning barcode recognition**
+
 - **NeoML integration** for advanced ML tasks
 - **Embedded PDFium** for native PDF handling
 - **Expanded API:** new methods for digital signatures, PDF portfolios, text layer quality

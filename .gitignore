@@ -92,3 +92,4 @@ build/
 node_modules/
 backend/venv/
 .env
+ocr-service-account.json

@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld(
   'electron',
   {
     processImage: (filePath) => ipcRenderer.invoke('process-image', filePath),
-    selectFile: () => ipcRenderer.invoke('select-file')
+    selectFile: () => ipcRenderer.invoke('select-file'),
+    selectFolder: () => ipcRenderer.invoke('select-folder')
   }
 ); 

@@ -1,0 +1,646 @@
+look at <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OCR Scanner App Mockup</title>
+  <style>
+    body {
+      font-family: 'San Francisco', Arial, sans-serif;
+      background: #23272e;
+      margin: 0;
+      padding: 0;
+      color: #fff;
+    }
+    .window {
+      width: 1400px;
+      height: 900px;
+      margin: 40px auto;
+      background: #2c2f36;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.38);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      height: 60px;
+      background: #181a1b;
+      border-bottom: 1px solid #333;
+      gap: 16px;
+    }
+    .top-bar input[type="text"] {
+      width: 160px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      font-size: 16px;
+      background: #23272e;
+      color: #fff;
+    }
+    .top-bar select, .top-bar button {
+      padding: 7px 16px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background: #23272e;
+      font-size: 16px;
+      color: #fff;
+      cursor: pointer;
+    }
+    .top-bar .start-btn {
+      background: #4caf50;
+      color: #fff;
+      border: none;
+      font-weight: bold;
+    }
+    .top-bar .settings-btn {
+      background: #23272e;
+      color: #90caf9;
+      border: 1px solid #444;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 7px 16px;
+      cursor: pointer;
+    }
+    .file-list-dropdown {
+      background: #23272e;
+      border-bottom: 1px solid #333;
+      padding: 0 24px;
+      height: 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transition: height 0.2s;
+      color: #fff;
+    }
+    .file-list-dropdown.minimized {
+      height: 24px;
+      overflow: hidden;
+    }
+    .file-list-header {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      font-size: 17px;
+      position: relative;
+    }
+    .file-list-header .low {
+      color: #fff;
+      background: #e53935;
+      border-radius: 12px;
+      padding: 2px 12px;
+      font-weight: bold;
+    }
+    .file-list-header .high {
+      color: #fff;
+      background: #43a047;
+      border-radius: 12px;
+      padding: 2px 12px;
+      font-weight: bold;
+    }
+    .file-list-header .progress-bar {
+      height: 12px;
+      background: #333;
+      border-radius: 6px;
+      width: 180px;
+      margin-left: 18px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .file-list-header .progress-bar .progress {
+      height: 100%;
+      background: #43a047;
+      width: 60%; /* Example: 60% done */
+      border-radius: 6px;
+      transition: width 0.3s;
+    }
+    .file-list-header .progress-bar .progress-label {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: #fff;
+      font-weight: bold;
+      z-index: 2;
+      text-shadow: 0 1px 2px #222;
+    }
+    .minimize-btn {
+      align-self: flex-end;
+      margin-top: 4px;
+      background: none;
+      border: none;
+      color: #bbb;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .main-panel {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+      position: relative;
+    }
+    .left-panel {
+      width: 600px;
+      background: #181a1b;
+      border-right: 1px solid #333;
+      overflow-y: auto;
+      padding: 24px 0 24px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      resize: horizontal;
+      min-width: 300px;
+      max-width: 900px;
+    }
+    .files-preview-header {
+      text-align: center;
+      font-size: 19px;
+      font-weight: bold;
+      margin-bottom: 18px;
+    }
+    .file-preview {
+      background: #23272e;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.14);
+      padding: 12px;
+      min-height: 220px;
+      height: 320px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+      border: 1.5px solid #bdbdbd;
+      margin-bottom: 12px;
+    }
+    .file-preview.high-confidence {
+      border: 2px solid #43a047;
+      background: #202923;
+    }
+    .file-preview.low-confidence {
+      border: 2px solid #e53935;
+      background: #231f1f;
+    }
+    .file-preview .filename {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #e53935;
+    }
+    .file-preview .img-mock {
+      flex: 1 1 auto;
+      width: 100%;
+      background: #333;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      color: #bbb;
+      font-size: 15px;
+      overflow-y: auto;
+      position: relative;
+    }
+    .file-preview .img-mock .page {
+      flex: 1 1 auto;
+      width: 100%;
+      min-height: 0;
+      background: #222;
+      border-radius: 4px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #bbb;
+      font-size: 14px;
+    }
+    .file-preview .page-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 2px;
+    }
+    .file-preview .page-controls button {
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid #444;
+      background: #23272e;
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .file-preview .page-controls .page-num {
+      font-size: 13px;
+      color: #90caf9;
+      min-width: 36px;
+      text-align: center;
+    }
+    .right-panel {
+      flex: 1;
+      background: #181a1b;
+      overflow-y: auto;
+      padding: 24px 24px 24px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 24px;
+      min-width: 320px;
+      max-width: 900px;
+      resize: horizontal;
+      position: relative;
+    }
+    .right-panel .action-bar {
+      position: static;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 10px;
+      background: none;
+      box-shadow: none;
+      border: none;
+      padding: 0;
+    }
+    .right-panel .action-bar button {
+      padding: 7px 16px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background: #23272e;
+      font-size: 16px;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s, color 0.2s;
+    }
+    .right-panel .action-bar .save-btn {
+      background: #1976d2;
+      color: #fff;
+      border: none;
+    }
+    .right-panel .action-bar .export-btn {
+      background: #43a047;
+      color: #fff;
+      border: none;
+    }
+    .right-panel .action-bar .ai-btn {
+      background: #23272e;
+      color: #90caf9;
+      border: 1px solid #444;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 7px 16px;
+      cursor: pointer;
+      margin-left: 12px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .summary-box {
+      background: #23272e;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.14);
+      padding: 16px 18px;
+      border: 1.5px solid #bdbdbd;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      direction: rtl;
+      text-align: right;
+      font-family: 'Arial', 'Noto Sans Hebrew', sans-serif;
+      font-size: 17px;
+      flex: 1 1 auto;
+      min-height: 320px;
+      max-width: 900px;
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      box-sizing: border-box;
+      position: relative;
+      color: #fff;
+    }
+    .summary-box .history {
+      width: 100%;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .summary-box .history-entry {
+      background: #181a1b;
+      border-radius: 7px;
+      padding: 8px 12px;
+      margin-bottom: 0;
+      font-size: 15px;
+      color: #bdbdbd;
+    }
+    .summary-box .current-summary-label {
+      text-align: center;
+      font-size: 19px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .summary-box .current-summary {
+      background: #333;
+      border-radius: 7px;
+      padding: 10px 14px;
+      font-size: 17px;
+      color: #fff;
+      margin-bottom: 0;
+      font-weight: bold;
+    }
+    .progress-bar {
+      height: 8px;
+      background: #333;
+      border-radius: 4px;
+      width: 220px;
+      margin-left: 18px;
+      overflow: hidden;
+      position: relative;
+    }
+    .progress-bar .progress {
+      height: 100%;
+      background: #43a047;
+      width: 60%; /* Example: 60% done */
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+    /* Floating AI Dialog */
+    .ai-dialog {
+      position: absolute;
+      top: 120px;
+      left: 180px;
+      width: 800px;
+      height: 520px;
+      background: #23272e;
+      border-radius: 14px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.38);
+      z-index: 10;
+      display: flex;
+      flex-direction: row;
+      resize: both;
+      overflow: hidden;
+      border: 2px solid #1976d2;
+      color: #fff;
+    }
+    .ai-dialog-drag {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 36px;
+      background: linear-gradient(90deg, #23272e 80%, #1976d2 100%);
+      border-bottom: 1px solid #333;
+      border-radius: 14px 14px 0 0;
+      display: flex;
+      align-items: center;
+      cursor: grab;
+      z-index: 11;
+      user-select: none;
+    }
+    .ai-dialog-drag .drag-dots {
+      width: 36px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ai-dialog-drag .drag-dots span {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      margin: 0 2px;
+      background: #555;
+      border-radius: 50%;
+    }
+    .ai-dialog-drag .drag-title {
+      flex: 1;
+      color: #bdbdbd;
+      font-size: 15px;
+      font-weight: bold;
+      text-align: center;
+      letter-spacing: 0.5px;
+      pointer-events: none;
+    }
+    .ai-dialog-section {
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-width: 0;
+    }
+    .ai-dialog-section.ai-dialog-prompt {
+      flex: 1 1 0;
+      border-left: 1px solid #333;
+      background: #181a1b;
+      padding: 18px 18px 18px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      direction: rtl;
+      text-align: right;
+      color: #fff;
+      min-height: 0;
+    }
+    .ai-dialog-prompt textarea {
+      flex: 1 1 auto;
+      min-height: 0;
+      max-height: none;
+      height: 100%;
+      border-radius: 7px;
+      border: 1px solid #444;
+      font-size: 18px;
+      padding: 18px 14px;
+      direction: rtl;
+      text-align: right;
+      font-family: 'Arial', 'Noto Sans Hebrew', sans-serif;
+      resize: none;
+      background: #23272e;
+      color: #fff;
+      margin-bottom: 14px;
+      box-sizing: border-box;
+    }
+    .ai-dialog-section.ai-dialog-chat {
+      overflow-y: auto;
+      min-height: 0;
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 18px 18px 18px 12px;
+      background: #181a1b;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      direction: rtl;
+      text-align: right;
+      color: #fff;
+    }
+    .ai-dialog-chat .user {
+      align-self: flex-end;
+      background: #388e3c;
+      color: #fff;
+      border-radius: 12px 12px 2px 12px;
+      padding: 7px 14px;
+      max-width: 80%;
+    }
+    .ai-dialog-chat .ai {
+      align-self: flex-start;
+      background: #333;
+      color: #fff;
+      border-radius: 12px 12px 12px 2px;
+      padding: 7px 14px;
+      max-width: 80%;
+    }
+    .ai-dialog-input-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 10px;
+      padding: 18px 18px 22px 18px;
+      background: #23272e;
+      border-top: 1px solid #333;
+      margin-top: auto;
+    }
+    .ai-dialog-input-row input[type="text"] {
+      flex: 1;
+      font-size: 18px;
+      padding: 16px 14px;
+      border-radius: 7px;
+      border: 1px solid #444;
+      direction: rtl;
+      text-align: right;
+      font-family: 'Arial', 'Noto Sans Hebrew', sans-serif;
+      background: #181a1b;
+      color: #fff;
+      height: 48px;
+      box-sizing: border-box;
+    }
+    .ai-dialog-input-row button,
+    .ai-dialog-actions button {
+      padding: 5px 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #1976d2;
+      color: #fff;
+    }
+    .ai-dialog-actions {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      padding: 18px 0 24px 0;
+      background: #23272e;
+      border-top: 1px solid #333;
+      margin-bottom: 0;
+      margin-top: 8px;
+    }
+    .ai-dialog.minimized {
+      height: 38px !important;
+      min-height: 0 !important;
+      width: 320px !important;
+      min-width: 180px !important;
+      max-width: 400px !important;
+      overflow: hidden;
+      transition: height 0.2s, width 0.2s;
+    }
+    .ai-dialog.minimized .ai-dialog-section {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="window">
+    <div class="top-bar">
+      <span>Patient ID:</span>
+      <input type="text" value="123456" style="border-color:#e53935; color:#e53935; background:#23272e;" />
+      <button>Prompt Template ▼</button>
+      <button>Export ▼</button>
+      <button class="settings-btn">Settings</button>
+      <button>Select Files/Folders</button>
+      <button class="start-btn">Start</button>
+    </div>
+    <div class="file-list-dropdown">
+      <div class="file-list-header">
+        <span class="low">Low-confidence files: 3</span>
+        <span class="high">High-confidence files: 7</span>
+        <div class="progress-bar">
+          <div class="progress" style="width:60%"></div>
+          <span class="progress-label">6/10 (60%)</span>
+        </div>
+      </div>
+      <button class="minimize-btn">▲</button>
+    </div>
+    <div class="main-panel">
+      <div class="left-panel">
+        <div class="files-preview-header" style="text-align:center; font-size:19px; font-weight:bold; margin-bottom:18px;">Files Preview</div>
+        <!-- High-confidence files -->
+        <div class="file-preview high-confidence">
+          <div class="filename">file1.pdf (98%)</div>
+          <div class="img-mock">
+            <div class="page">[Page 1 Preview]</div>
+            <div class="page">[Page 2 Preview]</div>
+            <div class="page">[Page 3 Preview]</div>
+            <div class="page-controls">
+              <button>&lt; Prev</button>
+              <span class="page-num">1 / 3</span>
+              <button>Next &gt;</button>
+            </div>
+          </div>
+        </div>
+        <div class="file-preview high-confidence">
+          <div class="filename">file3.jpg (95%)</div>
+          <div class="img-mock">[PDF/Image Preview]</div>
+        </div>
+        <div class="file-preview high-confidence">
+          <div class="filename">file4.tiff (91%)</div>
+          <div class="img-mock">[PDF/Image Preview]</div>
+        </div>
+        <!-- Low-confidence files -->
+        <div class="file-preview low-confidence">
+          <div class="filename">file2.jpg (68%)</div>
+          <div class="img-mock">[PDF/Image Preview]</div>
+        </div>
+        <div class="file-preview low-confidence">
+          <div class="filename">file5.pdf (72%)</div>
+          <div class="img-mock">[PDF/Image Preview]</div>
+        </div>
+        <div class="file-preview low-confidence">
+          <div class="filename">file8.tiff (80%)</div>
+          <div class="img-mock">[PDF/Image Preview]</div>
+        </div>
+        <div style="text-align:center; color:#bbb; font-size:13px; margin-top:18px;">(Files can be ordered by date found in OCR text, not file creation date)</div>
+      </div>
+      <div class="right-panel">
+        <div class="action-bar">
+          <button class="save-btn">Save All Corrections</button>
+          <button class="export-btn">Export</button>
+          <button class="ai-btn">AI Assist 🤖</button>
+        </div>
+        <div class="current-summary-label" style="text-align:center; font-size:19px; font-weight:bold; margin-bottom:10px;">סיכום נוכחי של המטופל</div>
+        <div class="summary-box">
+          <div class="history">
+            <div class="history-entry">סיכום היסטורי 1 של המטופל (הכי ישן)</div>
+            <div class="history-entry">סיכום היסטורי 2 של המטופל</div>
+            <div class="history-entry">סיכום היסטורי 3 של המטופל</div>
+          </div>
+          <div class="current-summary"></div>
+        </div>
+      </div>
+      <!-- Floating AI Dialog (closed in this mockup) -->
+      <!-- <div class="ai-dialog"> ... </div> -->
+    </div>
+  </div>
+</body>
+</html> 

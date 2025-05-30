@@ -5,6 +5,8 @@ from pdf2image import convert_from_path
 from PIL import Image
 import os
 import uuid
+import requests
+import json
 
 app = Flask(__name__)
 
@@ -71,6 +73,52 @@ def ocr_pdf():
 def ocr_pdf_status(job_id):
     text = ocr_results.get(job_id, "")
     return jsonify({"job_id": job_id, "status": "done", "success": True, "text": text})
+
+@app.route("/api/summarize", methods=["POST"])
+def summarize():
+    data = request.get_json()
+    texts = data.get("texts", [])
+    patient_id = data.get("patient_id", "")
+    engine = data.get("engine", "ollama")  # default to ollama, can be 'dicta' if needed
+    prompt = data.get("prompt", "Summarize the following medical documents for patient ID: {}. Provide a concise, medically accurate summary in Hebrew if possible.\n\n".format(patient_id))
+    full_text = "\n\n".join(texts)
+
+    if engine == "ollama":
+        # Call local Ollama API
+        try:
+            ollama_payload = {
+                "model": "llama2",  # or another local model name
+                "prompt": prompt + full_text,
+                "stream": False
+            }
+            resp = requests.post("http://localhost:11434/api/generate", json=ollama_payload, timeout=120)
+            if resp.status_code == 200:
+                result = resp.json()
+                summary = result.get("response", "")
+                return jsonify({"success": True, "summary": summary})
+            else:
+                return jsonify({"success": False, "error": f'Ollama error: {resp.text}'})
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)})
+    elif engine == "dicta":
+        # Dicta 2.0 local API integration
+        try:
+            dicta_payload = {
+                "prompt": prompt,
+                "text": full_text
+            }
+            # Dicta API expects JSON with 'prompt' and 'text', returns {'summary': ...}
+            resp = requests.post("http://localhost:5005/api/summarize", json=dicta_payload, timeout=120)
+            if resp.status_code == 200:
+                result = resp.json()
+                summary = result.get("summary", "")
+                return jsonify({"success": True, "summary": summary})
+            else:
+                return jsonify({"success": False, "error": f'Dicta error: {resp.text}'})
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)})
+    else:
+        return jsonify({"success": False, "error": "Unknown engine."})
 
 @app.route("/health", methods=["GET"])
 def health():

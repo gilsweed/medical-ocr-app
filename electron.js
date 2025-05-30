@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const axios = require('axios');
+const { dialog } = require('electron');
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -9,7 +10,7 @@ function createWindow() {
     backgroundColor: '#222222',
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false,
+      contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     }
   });
@@ -27,6 +28,15 @@ ipcMain.handle('check-backend-status', async () => {
   } catch (e) {
     return { status: 'Offline', color: '#b71c1c' };
   }
+});
+
+// IPC handler for folder selection
+ipcMain.handle('select-folder', async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory']
+  });
+  if (result.canceled || !result.filePaths.length) return null;
+  return result.filePaths[0];
 });
 
 app.whenReady().then(() => {

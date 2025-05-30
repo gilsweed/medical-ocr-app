@@ -1,6 +1,13 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to this project will be documented in this file. This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+### Added
+- UI/UX improvements: summary panel, draggable dividers, confidence bar dropdowns, and file preview area.
+- AI Assistant dialog and prompt management.
+- Knowledge file management in the UI.
+- Improved documentation and troubleshooting.
 
 ## [1.5.0] - 2025-05-16
 ### Added

@@ -1,0 +1,31 @@
+{
+  "name": "ocr-scanner",
+  "version": "1.0.5",
+  "description": "OCR Scanner Desktop Application",
+  "main": "electron.js",
+  "dependencies": {
+    "wait-on": "^7.2.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gilsweed/medical-ocr-app.git"
+  },
+  "author": "Your Name <your@email.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gilsweed/medical-ocr-app/issues"
+  },
+  "homepage": "https://github.com/gilsweed/medical-ocr-app#readme"
+}

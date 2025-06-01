@@ -1,0 +1,84 @@
+{
+  "name": "ocr-scanner",
+  "version": "1.0.5",
+  "description": "OCR Scanner Desktop Application",
+  "main": "electron.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder build --mac --win --linux",
+    "make": "electron-builder make --mac --win --linux",
+    "postinstall": "electron-builder install-app-deps",
+    "clean": "rm -rf backend/venv out dist build",
+    "setup": "bash build.sh",
+    "dev": "concurrently \"cd backend && ./venv/bin/python supervisor.py\" \"wait-on http://localhost:8080 && electron .\"",
+    "kill": "pkill -f 'python|node' || true",
+    "restart": "npm run kill && npm run dev",
+    "package": "npm run clean && npm run setup && npm run make",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.yourapp.id",
+    "productName": "OCR Scanner",
+    "directories": {
+      "output": "out"
+    },
+    "files": [
+       "electron.js",
+  "index.html",
+  "icon.png"
+    ],
+    "asarUnpack": [
+       "**/icon.png"
+    ],
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.utilities"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    }
+  },
+  "dependencies": {
+    "wait-on": "^7.2.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gilsweed/medical-ocr-app.git"
+  },
+  "keywords": [],
+  "author": "Your Name <your@email.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gilsweed/medical-ocr-app/issues"
+  },
+  "homepage": "https://github.com/gilsweed/medical-ocr-app#readme"
+}

@@ -1,0 +1,128 @@
+# Dependencies
+node_modules/
+dist/
+venv/
+ENV/
+
+# Build outputs
+build/
+*.pyc
+__pycache__/
+out/
+*.app/
+*.dmg
+*.exe
+*.zip
+*.deb
+*.pkg
+*.msi
+*.blockmap
+
+# Backup directories
+gil_ui_working_backup_*/
+saved version*/
+
+# Environment and secrets
+.env
+*.key
+*.lic
+*.license
+
+# Logs and system files
+*.log
+*.pid
+*.port
+.DS_Store
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+*-unpacked/
+*.dmg
+*.AppImage
+*.exe
+*.zip
+*.deb
+*.pkg
+*.msi
+*.blockmap
+
+# Environment variables
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ABBYY SDK files
+ABBYY_SDK/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Package files
+*.tgz
+*.zip
+*.rar
+
+# Debug files
+.debug/
+debug.log
+
+# Llama model files
+backend/models/*.gguf
+
+# Project specific
+backend/port.txt
+backend/server*.pid
+backend/server*.port
+archive/
+ocr-service-account.json
+
+# Testing
+/coverage
+.pnp
+.pnp.js
+
+# Electron build outputs
+out/
+dist/
+release/
+*.app/
+*.exe
+*.dmg
+*.zip
+*.deb
+*.rpm
+*.AppImage
+*.snap
+*.msi
+*.blockmap

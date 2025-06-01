@@ -1,0 +1,82 @@
+2025-05-13 06:24:49,730 - __main__ - INFO - Starting server on 0.0.0.0:8080
+2025-05-13 06:24:49,730 - __main__ - INFO - Attempting to start server...
+2025-05-13 06:24:49,743 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.68.104:8080
+2025-05-13 06:24:49,743 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-13 06:25:21,570 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 06:25:21] "HEAD / HTTP/1.1" 200 -
+2025-05-13 06:31:29,686 - __main__ - INFO - Starting server on 0.0.0.0:8080
+2025-05-13 06:31:29,686 - __main__ - INFO - Attempting to start server...
+2025-05-13 06:31:29,698 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.68.104:8080
+2025-05-13 06:31:29,698 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-13 06:35:32,263 - __main__ - INFO - Starting server on 0.0.0.0:8080
+2025-05-13 06:35:32,264 - __main__ - INFO - Attempting to start server...
+2025-05-13 06:35:32,278 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.68.104:8080
+2025-05-13 06:35:32,278 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-13 07:17:34,863 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 07:17:34] "HEAD / HTTP/1.1" 200 -
+2025-05-13 07:36:43,107 - __main__ - INFO - Starting server on 0.0.0.0:8080
+2025-05-13 07:36:43,107 - __main__ - INFO - Attempting to start server...
+2025-05-13 07:36:43,122 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.68.104:8080
+2025-05-13 07:36:43,122 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-13 07:46:51,001 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 07:46:51] "HEAD / HTTP/1.1" 200 -
+2025-05-13 07:48:53,060 - __main__ - INFO - Starting server on 0.0.0.0:8080
+2025-05-13 07:48:53,060 - __main__ - INFO - Attempting to start server...
+2025-05-13 07:48:53,066 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.68.104:8080
+2025-05-13 07:48:53,066 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-13 07:50:41,516 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 07:50:41] "HEAD / HTTP/1.1" 200 -
+2025-05-13 07:53:04,364 - __main__ - INFO - Starting server on 0.0.0.0:8080
+2025-05-13 07:53:04,365 - __main__ - INFO - Attempting to start server...
+2025-05-13 07:53:04,374 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.68.104:8080
+2025-05-13 07:53:04,374 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-13 07:53:14,642 - __main__ - INFO - Starting server on 0.0.0.0:8080
+2025-05-13 07:53:14,642 - __main__ - INFO - Attempting to start server...
+2025-05-13 07:53:14,649 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.68.104:8080
+2025-05-13 07:53:14,649 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-13 07:53:38,429 - werkzeug - INFO - 127.0.0.1 - - [13/May/2025 07:53:38] "HEAD / HTTP/1.1" 200 -
+2025-05-13 08:15:09,002 - __main__ - INFO - Starting server on 0.0.0.0:8080
+2025-05-13 08:15:09,002 - __main__ - INFO - Attempting to start server...
+2025-05-13 08:15:09,119 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.68.104:8080
+2025-05-13 08:15:09,120 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-13 17:06:25,354 - __main__ - INFO - Starting server on 0.0.0.0:8080
+2025-05-13 17:06:25,355 - __main__ - INFO - Attempting to start server...
+2025-05-13 17:06:25,373 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.68.104:8080
+2025-05-13 17:06:25,373 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-13 17:12:21,395 - __main__ - INFO - Starting server on 0.0.0.0:8081
+2025-05-13 17:12:21,395 - __main__ - INFO - Attempting to start server...
+2025-05-13 17:12:21,407 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-13 17:12:21,407 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-13 17:15:29,013 - __main__ - INFO - Starting server on 0.0.0.0:8082
+2025-05-13 17:15:29,013 - __main__ - INFO - Attempting to start server...
+2025-05-13 17:15:29,024 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-13 17:15:29,024 - werkzeug - INFO - [33mPress CTRL+C to quit[0m

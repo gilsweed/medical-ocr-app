@@ -1,0 +1,1 @@
+5323ab854e977574c71c7fa753e8ed28636e8ccc 68998750 ocr-scanner_1.0.5_arm64.deb

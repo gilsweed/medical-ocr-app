@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OCR Scanner App</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div class="window">
+    <!-- Top Menu Bar -->
+    <div class="top-bar">
+      <div class="menu-group">
+        <label class="patient-id-label">
+          <input
+            id="patient-id"
+            type="text"
+            maxlength="9"
+            pattern="\d*"
+            inputmode="numeric"
+            placeholder="Patient ID (up to 9 digits)"
+            autocomplete="off"
+          />
+        </label>
+        <button class="select-files-btn">Select Folder/Files</button>
+        <button class="trash-btn" title="Clear Selection">🗑️</button>
+        <button class="settings-btn">⚙️</button>
+        <div class="menu-dropdown">
+          <button id="prompt-template-btn">Prompt Templates ▼</button>
+          <div class="menu-dropdown-content" id="prompt-template-list">
+            <button data-template="Template 1">✔ Template 1</button>
+            <button data-template="Template 2">Template 2</button>
+          </div>
+        </div>
+        <div class="menu-dropdown">
+          <button id="export-btn">Export ▼</button>
+          <div class="menu-dropdown-content" id="export-list">
+            <button data-export="pdf">✔ PDF</button>
+            <button data-export="txt">TXT</button>
+            <button data-export="docx">DOCX</button>
+          </div>
+        </div>
+        <div class="menu-dropdown">
+          <button id="knowledge-btn">Knowledge Files ▼</button>
+          <div class="menu-dropdown-content">
+            <button id="add-knowledge-btn">Add Knowledge File</button>
+            <button id="remove-knowledge-btn">Remove Knowledge File</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Confidence Bar -->
+    <div class="file-list-dropdown" id="confidence-bar">
+      <div class="file-list-header">
+        <span class="confidence-label low" id="low-confidence-label">
+          Low Confidence (2)
+          <span class="confidence-dropdown-arrow" id="low-confidence-arrow">▼</span>
+        </span>
+        <span class="confidence-label high" id="high-confidence-label">
+          High Confidence (5)
+          <span class="confidence-dropdown-arrow" id="high-confidence-arrow">▼</span>
+        </span>
+        <div class="progress-bar">
+          <div class="progress" style="width: 70%;"></div>
+        </div>
+        <div class="progress-label">7/10 (70%)</div>
+        <div class="confidence-actions">
+          <div class="menu-dropdown" id="ocr-engine-dropdown-container">
+            <button id="ocr-engine-btn">OCR Engine: ABBYY ▼</button>
+            <div class="menu-dropdown-content" id="ocr-engine-list">
+              <button data-ocr="ABBYY">✔ ABBYY</button>
+              <button data-ocr="Google Vision">Google Vision</button>
+            </div>
+          </div>
+          <button class="start-btn" id="start-btn">Start</button>
+          <div class="menu-dropdown" id="chat-dropdown-container">
+            <button id="chat-dropdown-btn">DictaLM 2.0 ▼</button>
+            <div class="menu-dropdown-content" id="chat-dropdown-list" style="right:0; left:auto; min-width: 180px;">
+              <button data-chat="DictaLM 2.0">DictaLM 2.0</button>
+              <button data-chat="Ollama">Ollama</button>
+              <button data-chat="Other">Other</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Dropdowns for confidence files -->
+      <div class="confidence-files-dropdown" id="low-confidence-dropdown" style="display:none;"></div>
+      <div class="confidence-files-dropdown" id="high-confidence-dropdown" style="display:none;"></div>
+    </div>
+    <!-- Main Area -->
+    <div class="main-content">
+      <div class="file-previews-column" id="file-previews-column"></div>
+      <div class="divider" id="left-divider"></div>
+      <div class="ocr-texts-column" id="ocr-texts-column"></div>
+      <div class="divider" id="right-divider"></div>
+      <div class="summary-panel" id="summary-panel">
+        <div class="summary-action-bar">
+          <button class="summary-btn" id="ai-assist-btn">AI Assistant</button>
+          <button class="summary-btn" id="save-btn">Save All Corrections</button>
+          <button class="summary-btn" id="export-summary-btn">Export Summary</button>
+        </div>
+        <div class="summary-patient-id" id="summary-patient-id"></div>
+        <div class="summary-history" id="summary-history">
+          <!-- Historical summaries go here -->
+        </div>
+        <div class="summary-current">
+          <textarea class="summary-textarea" id="summary-textarea" placeholder="Type or edit summary...\n[Date will appear here]" style="direction: rtl; text-align: right;"></textarea>
+        </div>
+      </div>
+    </div>
+    <!-- AI Assist Dialog (hidden by default) -->
+    <div id="ai-dialog" class="ai-dialog" style="display:none;">
+      <div class="ai-dialog-header">
+        <span>AI Assistant</span>
+        <button id="close-ai-dialog" class="ai-dialog-close">✖</button>
+      </div>
+      <div class="ai-dialog-messages" id="ai-dialog-messages">
+        <!-- Conversation history will appear here -->
+      </div>
+      <div class="ai-dialog-input-area">
+        <input type="text" id="ai-dialog-input" class="ai-dialog-input" placeholder="Type your message..." />
+        <button id="ai-dialog-send" class="ai-dialog-send">Send</button>
+      </div>
+      <div class="ai-dialog-prompts" id="ai-dialog-prompts">
+        <label>Prompt Templates:</label>
+        <select id="ai-prompt-select">
+          <option>Template 1</option>
+          <option>Template 2</option>
+        </select>
+        <button id="ai-add-prompt" class="ai-dialog-prompt-btn">Add</button>
+        <button id="ai-edit-prompt" class="ai-dialog-prompt-btn">Edit</button>
+        <button id="ai-delete-prompt" class="ai-dialog-prompt-btn">Delete</button>
+      </div>
+    </div>
+    <!-- Hidden file input for knowledge file upload -->
+    <input type="file" id="knowledge-file-input" style="display:none;" accept=".txt,.pdf,.docx" />
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR Test Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .section {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            background-color: #f9f9f9;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OCR Test Interface</h1>
+        
+        <div class="section">
+            <h2>Single File Test</h2>
+            <form id="singleTestForm">
+                <div>
+                    <label for="file">Select File:</label>
+                    <input type="file" id="file" name="file" accept="image/*,.pdf" required>
+                </div>
+                <div>
+                    <label for="expectedText">Expected Text (optional):</label>
+                    <input type="text" id="expectedText" name="expected_text">
+                </div>
+                <button type="submit">Test File</button>
+            </form>
+            <div id="singleResult" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h2>Test Suite</h2>
+            <form id="suiteForm">
+                <div>
+                    <label for="suite">Test Suite JSON:</label>
+                    <input type="file" id="suite" name="suite" accept=".json" required>
+                </div>
+                <button type="submit">Run Test Suite</button>
+            </form>
+            <div id="suiteResult" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('singleTestForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const resultDiv = document.getElementById('singleResult');
+            
+            try {
+                const response = await fetch('/test', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <h3>Result:</h3>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                    ${result.success ? 
+                        `<p class="success">Test passed!</p>` : 
+                        `<p class="error">Test failed: ${result.error}</p>`
+                    }
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        });
+
+        document.getElementById('suiteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const resultDiv = document.getElementById('suiteResult');
+            
+            try {
+                const response = await fetch('/suite', {
+                    method: 'POST',
+                    body: formData
+                });
+                const results = await response.json();
+                
+                let html = '<h3>Results:</h3>';
+                for (const [file, result] of Object.entries(results)) {
+                    html += `
+                        <div>
+                            <h4>${file}</h4>
+                            <pre>${JSON.stringify(result, null, 2)}</pre>
+                            ${result.success ? 
+                                `<p class="success">Test passed!</p>` : 
+                                `<p class="error">Test failed: ${result.error}</p>`
+                            }
+                        </div>
+                    `;
+                }
+                resultDiv.innerHTML = html;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html> 

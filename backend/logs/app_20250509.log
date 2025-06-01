@@ -1,0 +1,179 @@
+2025-05-09 16:29:34,953 - config - INFO - Removed port file
+2025-05-09 19:48:46,571 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.68.104:8080
+2025-05-09 19:48:46,571 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 19:48:46,704 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 19:48:46] "HEAD / HTTP/1.1" 200 -
+2025-05-09 19:48:46,723 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 19:48:46] "HEAD / HTTP/1.1" 200 -
+2025-05-09 19:48:46,772 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 19:48:46] "HEAD / HTTP/1.1" 200 -
+2025-05-09 19:48:48,997 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-09 19:48:48,997 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 19:49:00,796 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 19:49:00] "HEAD / HTTP/1.1" 200 -
+2025-05-09 19:49:00,797 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 19:49:00] "HEAD / HTTP/1.1" 200 -
+2025-05-09 19:49:00,833 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 19:49:00] "HEAD / HTTP/1.1" 200 -
+2025-05-09 19:49:24,220 - main - INFO - Received signal 15
+2025-05-09 20:54:11,227 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 20:54:11] "HEAD / HTTP/1.1" 200 -
+2025-05-09 20:54:11,304 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-09 20:54:11,304 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 20:54:11,922 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-09 20:54:11,922 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 20:54:23,816 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 20:54:23] "HEAD / HTTP/1.1" 200 -
+2025-05-09 22:14:25,885 - main - INFO - Received signal 15
+2025-05-09 22:44:46,807 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 22:44:46] "HEAD / HTTP/1.1" 200 -
+2025-05-09 22:44:47,157 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-09 22:44:47,157 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 22:44:47,690 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-09 22:44:47,690 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 22:44:59,495 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 22:44:59] "HEAD / HTTP/1.1" 200 -
+2025-05-09 22:45:04,485 - main - INFO - Received signal 15
+2025-05-09 22:47:56,581 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 22:47:56] "HEAD / HTTP/1.1" 200 -
+2025-05-09 22:47:56,692 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-09 22:47:56,692 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 22:47:57,261 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-09 22:47:57,261 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 22:48:09,062 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 22:48:09] "HEAD / HTTP/1.1" 200 -
+2025-05-09 22:48:12,383 - main - INFO - Received signal 15
+2025-05-09 22:53:44,030 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 22:53:44] "HEAD / HTTP/1.1" 200 -
+2025-05-09 22:53:44,097 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-09 22:53:44,097 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 22:53:44,712 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-09 22:53:44,712 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 22:53:56,512 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 22:53:56] "HEAD / HTTP/1.1" 200 -
+2025-05-09 22:53:58,732 - main - INFO - Received signal 15
+2025-05-09 23:02:00,381 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 23:02:00] "HEAD / HTTP/1.1" 200 -
+2025-05-09 23:02:00,457 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-09 23:02:00,457 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 23:02:01,044 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-09 23:02:01,045 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 23:02:12,837 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 23:02:12] "HEAD / HTTP/1.1" 200 -
+2025-05-09 23:02:15,085 - main - INFO - Received signal 15
+2025-05-09 23:04:39,605 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 23:04:39] "HEAD / HTTP/1.1" 200 -
+2025-05-09 23:04:39,704 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-09 23:04:39,704 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 23:04:40,281 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-09 23:04:40,281 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 23:04:52,081 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 23:04:52] "HEAD / HTTP/1.1" 200 -
+2025-05-09 23:04:53,734 - main - INFO - Received signal 15
+2025-05-09 23:13:41,362 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 23:13:41] "HEAD / HTTP/1.1" 200 -
+2025-05-09 23:13:41,462 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-09 23:13:41,462 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 23:13:42,300 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-09 23:13:42,300 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 23:13:54,103 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 23:13:54] "HEAD / HTTP/1.1" 200 -
+2025-05-09 23:13:58,684 - main - INFO - Received signal 15
+2025-05-09 23:22:56,909 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 23:22:56] "HEAD / HTTP/1.1" 200 -
+2025-05-09 23:22:57,010 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-09 23:22:57,010 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 23:22:57,909 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-09 23:22:57,909 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 23:23:09,673 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 23:23:09] "HEAD / HTTP/1.1" 200 -
+2025-05-09 23:23:12,301 - main - INFO - Received signal 15
+2025-05-09 23:23:17,122 - main - INFO - Received signal 2
+2025-05-09 23:30:27,262 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 23:30:27] "HEAD / HTTP/1.1" 200 -
+2025-05-09 23:30:27,379 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-09 23:30:27,379 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 23:30:28,225 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-09 23:30:28,226 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 23:30:40,006 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 23:30:40] "HEAD / HTTP/1.1" 200 -
+2025-05-09 23:31:19,717 - main - INFO - Received signal 15
+2025-05-09 23:55:16,037 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 23:55:16] "HEAD / HTTP/1.1" 200 -
+2025-05-09 23:55:16,212 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://192.168.68.104:8081
+2025-05-09 23:55:16,212 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 23:55:16,977 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8082
+ * Running on http://192.168.68.104:8082
+2025-05-09 23:55:16,977 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-09 23:55:28,763 - werkzeug - INFO - 127.0.0.1 - - [09/May/2025 23:55:28] "HEAD / HTTP/1.1" 200 -
+2025-05-09 23:55:33,296 - main - INFO - Received signal 15
+2025-05-10 00:06:50,083 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 00:06:50] "HEAD / HTTP/1.1" 200 -
+2025-05-10 00:07:02,712 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 00:07:02] "HEAD / HTTP/1.1" 200 -
+2025-05-10 00:13:29,610 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 00:13:29] "HEAD / HTTP/1.1" 200 -
+2025-05-10 00:13:42,089 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 00:13:42] "HEAD / HTTP/1.1" 200 -
+2025-05-10 00:14:51,745 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 00:14:51] "HEAD / HTTP/1.1" 200 -
+2025-05-10 00:15:04,218 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 00:15:04] "HEAD / HTTP/1.1" 200 -
+2025-05-10 00:15:49,468 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 00:15:49] "HEAD / HTTP/1.1" 200 -
+2025-05-10 00:16:01,939 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 00:16:01] "HEAD / HTTP/1.1" 200 -
+2025-05-10 00:17:17,308 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 00:17:17] "HEAD / HTTP/1.1" 200 -
+2025-05-10 00:17:29,779 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 00:17:29] "HEAD / HTTP/1.1" 200 -
+2025-05-10 00:18:58,722 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 00:18:58] "HEAD / HTTP/1.1" 200 -
+2025-05-10 00:19:11,195 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 00:19:11] "HEAD / HTTP/1.1" 200 -
+2025-05-10 00:19:29,349 - main - INFO - Received process request
+2025-05-10 00:19:29,350 - main - INFO - Processing file: /Users/gilsweed/Downloads/308104629-28-4-25/הזמנת חוות דעת רפואית פנסיה מס' 1522183/1195802777 - אישורי מחלה- תביעות חיים.pdf
+2025-05-10 00:19:29,350 - main - INFO - Processing PDF: /Users/gilsweed/Downloads/308104629-28-4-25/הזמנת חוות דעת רפואית פנסיה מס' 1522183/1195802777 - אישורי מחלה- תביעות חיים.pdf
+2025-05-10 00:19:30,270 - main - INFO - Processing page 1 of 1
+2025-05-10 00:19:30,676 - main - INFO - Processing image: /var/folders/j1/6xw37xx5633_2y3t4_p2p_rw0000gn/T/tmp_1lb8y51.png
+2025-05-10 00:19:33,703 - main - INFO - Image processing completed successfully
+2025-05-10 00:19:33,704 - main - INFO - PDF processing completed successfully
+2025-05-10 00:19:33,706 - main - INFO - File processing completed successfully
+2025-05-10 00:19:33,707 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 00:19:33] "POST /api/process HTTP/1.1" 200 -
+2025-05-10 06:32:14,685 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 06:32:14] "HEAD / HTTP/1.1" 200 -
+2025-05-10 06:32:27,167 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 06:32:27] "HEAD / HTTP/1.1" 200 -
+2025-05-10 06:34:31,725 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 06:34:31] "HEAD / HTTP/1.1" 200 -
+2025-05-10 06:34:44,180 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 06:34:44] "HEAD / HTTP/1.1" 200 -
+2025-05-10 06:43:43,511 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 06:43:43] "HEAD / HTTP/1.1" 200 -
+2025-05-10 06:43:55,990 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 06:43:55] "HEAD / HTTP/1.1" 200 -
+2025-05-10 06:49:12,904 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 06:49:12] "HEAD / HTTP/1.1" 200 -
+2025-05-10 06:49:25,383 - werkzeug - INFO - 127.0.0.1 - - [10/May/2025 06:49:25] "HEAD / HTTP/1.1" 200 -
+2025-05-10 09:18:43,467 - main - INFO - Received signal 15

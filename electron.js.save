@@ -1,0 +1,36 @@
+kconsole.log('*** DEBUG: electron.js running from', __dirname);
+const { app, BrowserWindow, ipcMain } = require('electron');
+const path = require('path');
+const axios = require('axios');
+
+function createWindow() {
+    const win = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        },
+    });
+
+    win.loadFile('index.html');
+}
+
+// IPC handler for backend status check
+ipcMain.handle('check-backend-status', async () => {
+    try {
+        const res = await axios.get('http://localhost:8082/health');
+        if (res.status === 200) {
+            return { status: 'Ready', color: '#4caf50' };
+        }
+        return { status: 'Offline', color: '#b71c1c' };
+    } catch (e) {
+        return { status: 'Offline', color: '#b71c1c' };
+    }
+});
+
+app.whenReady().then(createWindow);
+
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit();

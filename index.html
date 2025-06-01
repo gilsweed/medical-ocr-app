@@ -52,17 +52,17 @@
     <div class="file-list-dropdown" id="confidence-bar">
       <div class="file-list-header">
         <span class="confidence-label low" id="low-confidence-label">
-          Low Confidence (2)
+          Low Confidence (0)
           <span class="confidence-dropdown-arrow" id="low-confidence-arrow">▼</span>
         </span>
         <span class="confidence-label high" id="high-confidence-label">
-          High Confidence (5)
+          High Confidence (0)
           <span class="confidence-dropdown-arrow" id="high-confidence-arrow">▼</span>
         </span>
         <div class="progress-bar">
-          <div class="progress" style="width: 70%;"></div>
+          <div class="progress" style="width: 0%;"></div>
         </div>
-        <div class="progress-label">7/10 (70%)</div>
+        <div class="progress-label">0/0 (0%)</div>
         <div class="confidence-actions">
           <div class="menu-dropdown" id="ocr-engine-dropdown-container">
             <button id="ocr-engine-btn">OCR Engine: ABBYY ▼</button>
@@ -93,17 +93,17 @@
       <div class="ocr-texts-column" id="ocr-texts-column"></div>
       <div class="divider" id="right-divider"></div>
       <div class="summary-panel" id="summary-panel">
-        <div class="summary-action-bar">
-          <button class="summary-btn" id="ai-assist-btn">AI Assistant</button>
-          <button class="summary-btn" id="save-btn">Save All Corrections</button>
-          <button class="summary-btn" id="export-summary-btn">Export Summary</button>
-        </div>
-        <div class="summary-patient-id" id="summary-patient-id"></div>
-        <div class="summary-history" id="summary-history">
-          <!-- Historical summaries go here -->
-        </div>
-        <div class="summary-current">
-          <textarea class="summary-textarea" id="summary-textarea" placeholder="Type or edit summary...\n[Date will appear here]" style="direction: rtl; text-align: right;"></textarea>
+        <div class="summary-content">
+          <div class="summary-action-bar">
+            <button class="summary-btn" id="ai-assist-btn">AI Assistant</button>
+            <button class="summary-btn" id="save-btn">Save</button>
+            <button class="summary-btn" id="export-summary-btn">Export Summary</button>
+          </div>
+          <div class="summary-patient-id" id="summary-patient-id"></div>
+          <textarea class="summary-textarea" id="summary-textarea" placeholder="הקלד או ערוך סיכום..." style="direction: rtl; text-align: right;"></textarea>
+          <div class="summary-history" id="summary-history">
+            <!-- Historical summaries go here -->
+          </div>
         </div>
       </div>
     </div>

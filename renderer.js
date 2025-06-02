@@ -424,8 +424,33 @@ function scrollToFilePreview(file) {
 // --- File/Folder selection and trash icon logic (for demo, just clears preview) ---
 const selectFilesBtn = document.querySelector('.select-files-btn');
 const trashBtn = document.querySelector('.trash-btn');
-selectFilesBtn.addEventListener('click', () => {
-  // For demo, do nothing (real file selection would go here)
+selectFilesBtn.addEventListener('click', async () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.pdf,.jpg,.jpeg,.png,.tiff,.tif';
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('http://localhost:8080/ocr', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+      if (data.text) {
+        ocrTextsColumn.innerHTML = `<div class="ocr-text">${data.text}</div>`;
+      } else {
+        ocrTextsColumn.innerHTML = `<div class="ocr-error">${data.error || 'OCR failed'}</div>`;
+      }
+    } catch (error) {
+      ocrTextsColumn.innerHTML = `<div class="ocr-error">Error: ${error.message}</div>`;
+    }
+  };
+  input.click();
 });
 trashBtn.addEventListener('click', () => {
   // Remove all file previews from the files panel

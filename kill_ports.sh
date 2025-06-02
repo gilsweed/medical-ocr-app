@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Aggressively killing processes on ports 8080 and 8082..."
+
 # Function to kill process on a port
 kill_port() {
     local port=$1
@@ -19,20 +21,31 @@ kill_port() {
     fi
 }
 
-# Kill processes on both ports to be safe
+# Kill processes on both ports
 kill_port 8080
 kill_port 8082
 
-# Start the backend server
-echo "Starting backend server..."
-cd /Users/gilsweed/Desktop/Brurya/gil/backend
-python3 main.py &
+# Additional cleanup
+echo "Performing additional cleanup..."
+pkill -f "python3 main.py"
+pkill -f "node"
+pkill -f "electron"
 
-# Wait for the server to start
-echo "Waiting for server to start..."
+echo "Waiting for ports to be fully released..."
 sleep 3
 
-# Start the frontend
-echo "Starting frontend..."
-cd /Users/gilsweed/Desktop/Brurya/gil
-npm start
+# Verify ports are free
+echo "Verifying ports are free..."
+if lsof -i :8080 > /dev/null; then
+    echo "WARNING: Port 8080 is still in use!"
+else
+    echo "Port 8080 is free"
+fi
+
+if lsof -i :8082 > /dev/null; then
+    echo "WARNING: Port 8082 is still in use!"
+else
+    echo "Port 8082 is free"
+fi
+
+echo "Cleanup complete!" 

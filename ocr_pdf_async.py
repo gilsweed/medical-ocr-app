@@ -3,20 +3,53 @@ from google.cloud import storage, vision_v1
 from google.cloud.vision_v1 import types
 import json
 import os
+import logging
 
-def upload_gcs_file(bucket_name, source_file_path, destination_blob_name):
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Set the environment variable for the service account key file
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(os.path.dirname(__file__), "gil", "ocr-service-account.json")
+
+def check_bucket_exists(bucket_name):
+    """Check if the GCS bucket exists and is accessible."""
     try:
         storage_client = storage.Client()
         bucket = storage_client.bucket(bucket_name)
+        return bucket.exists()
+    except Exception as e:
+        logger.error(f"Error checking bucket existence: {e}")
+        return False
+
+def upload_gcs_file(bucket_name, source_file_path, destination_blob_name):
+    """Upload a file to GCS bucket."""
+    try:
+        if not check_bucket_exists(bucket_name):
+            logger.error(f"Bucket {bucket_name} does not exist or is not accessible")
+            return False
+
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(destination_blob_name)
+        
+        # Check if source file exists and is readable
+        if not os.path.exists(source_file_path):
+            logger.error(f"Source file {source_file_path} does not exist")
+            return False
+        if not os.access(source_file_path, os.R_OK):
+            logger.error(f"Source file {source_file_path} is not readable")
+            return False
+
         blob.upload_from_filename(source_file_path)
-        print(f"Uploaded {source_file_path} to gs://{bucket_name}/{destination_blob_name}")
+        logger.info(f"Uploaded {source_file_path} to gs://{bucket_name}/{destination_blob_name}")
         return True
     except Exception as e:
-        print(f"[ERROR] Upload step failed: {e}")
+        logger.error(f"Error uploading file: {e}")
         return False
 
 def async_ocr_pdf(bucket_name, source_blob_name, output_prefix):
+    """Run async OCR on a PDF file in GCS."""
     try:
         client = vision_v1.ImageAnnotatorClient()
         gcs_source_uri = f"gs://{bucket_name}/{source_blob_name}"
@@ -32,71 +65,76 @@ def async_ocr_pdf(bucket_name, source_blob_name, output_prefix):
             features=[feature], input_config=input_config, output_config=output_config
         )
         operation = client.async_batch_annotate_files(requests=[async_request])
-        print("Processing OCR... (this may take a while)")
+        logger.info("Processing OCR... (this may take a while)")
         operation.result(timeout=600)
-        print("OCR processing complete.")
+        logger.info("OCR processing complete.")
         return True
     except Exception as e:
-        print(f"[ERROR] OCR step failed: {e}")
+        logger.error(f"Error running OCR: {e}")
         return False
 
-def download_gcs_results(bucket_name, output_prefix, local_dir):
+def download_gcs_results(bucket_name, output_prefix, local_output_dir):
+    """Download OCR results from GCS."""
     try:
         storage_client = storage.Client()
         bucket = storage_client.bucket(bucket_name)
-        blobs = list(bucket.list_blobs(prefix=output_prefix))
-        local_files = []
+        blobs = bucket.list_blobs(prefix=output_prefix)
+        
+        os.makedirs(local_output_dir, exist_ok=True)
+        
         for blob in blobs:
             if blob.name.endswith('.json'):
-                local_path = os.path.join(local_dir, os.path.basename(blob.name))
+                local_path = os.path.join(local_output_dir, os.path.basename(blob.name))
                 blob.download_to_filename(local_path)
-                print(f"Downloaded result: {local_path}")
-                local_files.append(local_path)
-        if not local_files:
-            raise Exception("No result JSON files found in bucket.")
-        return local_files
-    except Exception as e:
-        print(f"[ERROR] Download step failed: {e}")
-        return []
-
-def parse_ocr_results(json_files, output_txt):
-    try:
-        all_text = ""
-        for json_file in json_files:
-            with open(json_file, "r", encoding="utf-8") as f:
-                response = json.load(f)
-                for resp in response["responses"]:
-                    if "fullTextAnnotation" in resp:
-                        all_text += resp["fullTextAnnotation"]["text"] + "\n"
-        with open(output_txt, "w", encoding="utf-8") as out_f:
-            out_f.write(all_text)
-        print(f"OCR text saved to {output_txt}")
+                logger.info(f"Downloaded {blob.name} to {local_path}")
         return True
     except Exception as e:
-        print(f"[ERROR] Parse step failed: {e}")
+        logger.error(f"Error downloading results: {e}")
+        return False
+
+def parse_ocr_results(json_file_path, output_text_file):
+    """Parse OCR results from JSON file and save to text file."""
+    try:
+        with open(json_file_path, 'r') as f:
+            response = json.load(f)
+        
+        text = ""
+        if 'fullTextAnnotation' in response:
+            text = response['fullTextAnnotation'].get('text', '')
+        
+        with open(output_text_file, 'w', encoding='utf-8') as f:
+            f.write(text)
+        
+        logger.info(f"Saved OCR text to {output_text_file}")
+        return True
+    except Exception as e:
+        logger.error(f"Error parsing OCR results: {e}")
         return False
 
 def delete_gcs_file(bucket_name, blob_name):
+    """Delete a file from GCS bucket."""
     try:
         storage_client = storage.Client()
         bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(blob_name)
         blob.delete()
-        print(f"Deleted {blob_name} from bucket {bucket_name}")
+        logger.info(f"Deleted {blob_name} from bucket {bucket_name}")
         return True
     except Exception as e:
-        print(f"[ERROR] Deletion step failed for {blob_name}: {e}")
+        logger.error(f"Error deleting file: {e}")
         return False
 
 def delete_gcs_results(bucket_name, output_prefix):
+    """Delete all OCR result files from GCS bucket."""
     try:
         storage_client = storage.Client()
         bucket = storage_client.bucket(bucket_name)
-        blobs = list(bucket.list_blobs(prefix=output_prefix))
+        blobs = bucket.list_blobs(prefix=output_prefix)
+        
         for blob in blobs:
             blob.delete()
-            print(f"Deleted {blob.name} from bucket {bucket_name}")
+            logger.info(f"Deleted {blob.name} from bucket {bucket_name}")
         return True
     except Exception as e:
-        print(f"[ERROR] Deletion step failed for result files: {e}")
+        logger.error(f"Error deleting results: {e}")
         return False

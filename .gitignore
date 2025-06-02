@@ -1,55 +1,54 @@
 # Dependencies
 node_modules/
-dist/
 venv/
 ENV/
+__pycache__/
+*.pyc
 
 # Build outputs
+dist/
 build/
-*.pyc
-__pycache__/
 out/
-*.app/
-*.dmg
-*.exe
-*.zip
-*.deb
-*.pkg
-*.msi
-*.blockmap
 
-# Backup directories
-gil_ui_working_backup_*/
-saved version*/
+# Logs
+*.log
+*.pid
+*.port
 
 # Environment and secrets
 .env
 *.key
 *.lic
 *.license
+credentials.json
+token.json
 
-# Logs and system files
-*.log
-*.pid
-*.port
+# IDE and OS files
 .DS_Store
-
-# IDE files
 .idea/
 .vscode/
 *.swp
 *.swo
 
-# OS files
-*-unpacked/
+# ABBYY specific
+/Library/Frameworks/ABBYY.FREngine.framework/
+~/Library/Application Support/ABBYY/
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+
+# Large files
 *.dmg
-*.AppImage
-*.exe
+*.iso
 *.zip
-*.deb
-*.pkg
-*.msi
-*.blockmap
+*.tar.gz
+*.rar
+
+# Backup directories
+gil_ui_working_backup_*/
+saved version*/
 
 # Environment variables
 .env.local
@@ -82,11 +81,6 @@ MANIFEST
 
 # ABBYY SDK files
 ABBYY_SDK/
-
-# Temporary files
-*.tmp
-*.temp
-.cache/
 
 # Package files
 *.tgz

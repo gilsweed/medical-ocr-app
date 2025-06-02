@@ -63,6 +63,11 @@ saved version*/
 **/*.snap
 **/*.msi
 **/*.blockmap
+**/extracted_app/
+**/icon.iconset/
+**/*.save
+**/package 2.json
+**/package-lock 2.json
 
 # Environment variables
 .env.local

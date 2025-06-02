@@ -46,9 +46,23 @@ tmp/
 *.tar.gz
 *.rar
 
-# Backup directories
+# Backup directories - more specific patterns
 gil_ui_working_backup_*/
 saved version*/
+**/backup*/
+**/out/
+**/dist/
+**/build/
+**/*.app/
+**/*.dmg
+**/*.exe
+**/*.zip
+**/*.deb
+**/*.rpm
+**/*.AppImage
+**/*.snap
+**/*.msi
+**/*.blockmap
 
 # Environment variables
 .env.local
